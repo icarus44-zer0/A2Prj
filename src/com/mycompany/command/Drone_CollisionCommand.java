@@ -12,20 +12,21 @@ import com.mycompany.a2.GameWorld;
  *
  */
 public class Drone_CollisionCommand extends Command {
-
+	private GameWorld targetGameWorld;
 	
 	/**
 	 * @param command
 	 */
-	public Drone_CollisionCommand(String command) {
+	public Drone_CollisionCommand(String command, GameWorld gameworld) {
 		super(command);
-		// TODO Auto-generated constructor stub
+		this.targetGameWorld = gameworld;
 	}
+	
 
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		GameWorld.get_Instance().pCyborg_droneCollison();
+		targetGameWorld.pCyborg_droneCollison();
 		super.actionPerformed(evt);
 	}
 }

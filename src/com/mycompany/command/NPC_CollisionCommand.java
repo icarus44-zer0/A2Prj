@@ -12,19 +12,20 @@ import com.mycompany.a2.GameWorld;
  *
  */
 public class NPC_CollisionCommand extends Command {
-
+	private GameWorld targetGameWorld;
 	
 	/**
 	 * @param command
 	 */
-	public NPC_CollisionCommand(String command) {
+	public NPC_CollisionCommand(String command, GameWorld gameworld) {
 		super(command);
-		// TODO Auto-generated constructor stub
+		this.targetGameWorld = gameworld;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		GameWorld.get_Instance().pCyborg_cyborgCollision();
+		targetGameWorld.pCyborg_cyborgCollision();
 		super.actionPerformed(evt);
 	}
 }
+

@@ -12,18 +12,22 @@ import com.mycompany.a2.GameWorld;
  *
  */
 public class AccelerateCommand extends Command {
-
+	private GameWorld targetGameWorld;
 	/**
 	 * @param command
 	 */
-	public AccelerateCommand(String command) {
+	public AccelerateCommand(String command, GameWorld gameworld) {
 		super(command);
-		// TODO Auto-generated constructor stub
+		this.targetGameWorld = gameworld;
 	}
 
+	
+	
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		GameWorld.get_Instance().pCyborg_accelerate();
+		targetGameWorld.pCyborg_accelerate();
 		super.actionPerformed(evt);
 	}
 }
+
+

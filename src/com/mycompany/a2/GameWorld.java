@@ -1,6 +1,7 @@
 package com.mycompany.a2;
 import java.util.HashMap;
 import java.util.Observable;
+import java.util.Observer;
 import java.util.Random;
 import java.util.TreeMap;
 
@@ -85,16 +86,6 @@ public class GameWorld extends Observable{
 		_gameObjectMap.put("eStation4",eStation4);
 	}
 	
-	/**
-	 * Getter for the capacity of a Fixed Energy Station Gameobject.
-	 * @return the capacity of a Fixed Energy Station Gameobject.
-	 */
-
-	/**
-	 * Setter for the capacity of a Fixed Energy Station Gameobject.
-	 * @param the new the capacity of a Fixed Energy Station Gameobject..
-	 */
-	
 	
 	/**
 	 * Getter for the lives of a the player cyborg.
@@ -128,9 +119,6 @@ public class GameWorld extends Observable{
 		return _HIEGTH;
 	}
 	
-	
-	
-	
 	/**
 	 * @return the _gameObjects
 	 */
@@ -138,12 +126,6 @@ public class GameWorld extends Observable{
 		return _gameObjectMap;
 	}
 
-	/**
-	 * @param _gameObjects the _gameObjects to set
-	 */
-	public void set_gameObjectMap(HashMap<String, GameObject> gameObjectMap) {
-		this._gameObjectMap = gameObjectMap;
-	}
 
 	/**
 	 * @return the _timeElapsed
@@ -152,12 +134,6 @@ public class GameWorld extends Observable{
 		return _timeElapsed;
 	}
 
-	/**
-	 * @param _timeElapsed the _timeElapsed to set
-	 */
-	public void set_timeElapsed(int _timeElapsed) {
-		this._timeElapsed = _timeElapsed;
-	}
 
 	/*
 	 * keyboard input "a"
@@ -168,6 +144,10 @@ public class GameWorld extends Observable{
 		int curSpeed = refCyborg.get_speed();
 		curSpeed+=1;
 		refCyborg.set_speed(curSpeed);
+		setChanged();
+		notifyObservers();
+		
+		
 		System.out.println("p1Cyborg"+ ": " + refCyborg);
 		System.out.println();
 	}
@@ -180,6 +160,9 @@ public class GameWorld extends Observable{
 		Cyborg refCyborg = (Cyborg) _gameObjectMap.get("p1Cyborg");
 		int curSpeed = refCyborg.get_speed();
 		refCyborg.set_speed(curSpeed-1);
+		setChanged();
+		notifyObservers();
+		
 		System.out.println("p1Cyborg"+ ": " + refCyborg);
 		System.out.println();
 	}
@@ -191,6 +174,9 @@ public class GameWorld extends Observable{
 	public void pCyborg_turnLeft() {
 		Cyborg refCyborg = (Cyborg) _gameObjectMap.get("p1Cyborg");
 		refCyborg.set_steeringDirection(-5);
+		setChanged();
+		notifyObservers();
+		
 		System.out.println("p1Cyborg"+ ": " + refCyborg);
 		System.out.println();
 	}
@@ -202,6 +188,9 @@ public class GameWorld extends Observable{
 	public void pCyborg_turnRight() {
 		Cyborg refCyborg = (Cyborg) _gameObjectMap.get("p1Cyborg");
 		refCyborg.set_steeringDirection(5);
+		setChanged();
+		notifyObservers();
+		
 		System.out.println("p1Cyborg"+ ": " + refCyborg);
 		System.out.println();
 	}
@@ -240,6 +229,9 @@ public class GameWorld extends Observable{
 		
 		refNPCyborg.set_speed(refNPCyborg.get_speed());
 		
+		setChanged();
+		notifyObservers();
+		
 		System.out.println("p1Cyborg"+ ": " + refCyborg);
 		System.out.println();
 	}
@@ -272,6 +264,9 @@ public class GameWorld extends Observable{
 		}
 
 		refCyborg.set_point(refBase.get_point());
+		
+		setChanged();
+		notifyObservers();
 	
 		System.out.println("p1Cyborg"+ ": " + refCyborg);
 		System.out.println();
@@ -319,7 +314,10 @@ public class GameWorld extends Observable{
 		refCyborg.set_energyLevel(0);
 		
 		refCyborg.set_energyLevel(eCpacity + cyborgEng);
-			
+		
+		setChanged();
+		notifyObservers();
+		
 		System.out.println("p1Cyborg"+ ": " + refCyborg);
 		System.out.println();
 	}
@@ -353,6 +351,9 @@ public class GameWorld extends Observable{
 		checkCyborgState(refCyborg, refCyborg.toString());
 		
 		refCyborg.set_speed(refCyborg.get_speed());
+		
+		setChanged();
+		notifyObservers();
 		
 		System.out.println("p1Cyborg"+ ": " + refCyborg);
 		System.out.println();
@@ -410,6 +411,9 @@ public class GameWorld extends Observable{
 				}
 			}	
 		}
+		
+		setChanged();
+		notifyObservers();
 	}
 	
 	/**
@@ -438,6 +442,8 @@ public class GameWorld extends Observable{
 			System.exit(42);
 			return;
 		}
+		setChanged();
+		notifyObservers();
 	}
 	
 	
@@ -445,6 +451,7 @@ public class GameWorld extends Observable{
 	 * keyboard input "d"
 	 * displays the current status of the player cyborg.
 	 */
+	@Deprecated
 	public void displayGameStatus() {
 		System.out.println();
 		Cyborg refCyborg = (Cyborg) _gameObjectMap.get("p1Cyborg");
@@ -470,6 +477,7 @@ public class GameWorld extends Observable{
 	 * Keybaord input "m"
 	 * prints the values of all of the GameObjects to the console.
 	 */
+	@Deprecated
 	public void displayGameMap() {
 		System.out.println();
 		for (String key : _gameObjectMap.keySet()) {

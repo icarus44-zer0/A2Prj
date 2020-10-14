@@ -12,19 +12,20 @@ import com.mycompany.a2.GameWorld;
  *
  */
 public class TickGameClockCommand extends Command {
-
+	private GameWorld targetGameWorld;
 	
-	/**
+	/**	
 	 * @param command
 	 */
-	public TickGameClockCommand(String command) {
+	public TickGameClockCommand(String command, GameWorld gameworld) {
 		super(command);
-		// TODO Auto-generated constructor stub
+		this.targetGameWorld = gameworld;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		GameWorld.get_Instance().tickGameClock();
+		targetGameWorld.tickGameClock();
 		super.actionPerformed(evt);
 	}
 }
+

@@ -12,20 +12,21 @@ import com.mycompany.a2.GameWorld;
  *
  */
 public class Estat_CollisionCommand extends Command {
-
+	private GameWorld targetGameWorld;
 	
 	
 	/**
 	 * @param command
 	 */
-	public Estat_CollisionCommand(String command) {
+	public Estat_CollisionCommand(String command, GameWorld gameworld) {
 		super(command);
-		// TODO Auto-generated constructor stub
+		this.targetGameWorld = gameworld;
 	}
+	
 	
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		GameWorld.get_Instance().pCyborg_eStationCollison();
+		targetGameWorld.pCyborg_eStationCollison();
 		super.actionPerformed(evt);
 	}
 }

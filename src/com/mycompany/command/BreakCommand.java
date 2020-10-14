@@ -12,19 +12,19 @@ import com.mycompany.a2.GameWorld;
  *
  */
 public class BreakCommand extends Command {
-
+	private GameWorld targetGameWorld;
 	
 	/**
 	 * @param command
 	 */
-	public BreakCommand(String command) {
+	public BreakCommand(String command, GameWorld gameworld) {
 		super(command);
-		// TODO Auto-generated constructor stub
+		this.targetGameWorld = gameworld;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		GameWorld.get_Instance().pCyborg_brake();
+		targetGameWorld.pCyborg_brake();
 		super.actionPerformed(evt);
 	}
 }

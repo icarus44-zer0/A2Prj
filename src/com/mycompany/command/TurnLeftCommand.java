@@ -12,16 +12,18 @@ import com.mycompany.a2.GameWorld;
  *
  */
 public class TurnLeftCommand extends Command {
-
-	public TurnLeftCommand(String command) {
+	private GameWorld targetGameWorld;
+	
+	public TurnLeftCommand(String command, GameWorld gameworld) {
 		super(command);
-		// TODO Auto-generated constructor stub
+		this.targetGameWorld = gameworld;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		GameWorld.get_Instance().pCyborg_turnLeft();
+		targetGameWorld.pCyborg_turnLeft();
 		super.actionPerformed(evt);
 	}
 	
 }
+

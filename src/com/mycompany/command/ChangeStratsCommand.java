@@ -5,25 +5,29 @@ package com.mycompany.command;
 
 import com.codename1.ui.Command;
 import com.codename1.ui.events.ActionEvent;
+import com.mycompany.a2.GameWorld;
 
 /**
  * @author Icarus44
  *
  */
 public class ChangeStratsCommand extends Command {
-
+	private GameWorld targetGameWorld;
 	/**
 	 * @param command
 	 */
-	public ChangeStratsCommand(String command) {
+	public ChangeStratsCommand(String command, GameWorld gameworld) {
 		super(command);
-		// TODO Auto-generated constructor stub
+		this.targetGameWorld = gameworld;
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		
+		//TODO code for strats
 		super.actionPerformed(evt);
 	}
 
 }
+
+
+

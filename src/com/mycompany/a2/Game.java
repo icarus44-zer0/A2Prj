@@ -6,23 +6,28 @@ package com.mycompany.a2;
 */
 
 
+import com.codename1.ui.Command;
 import com.codename1.ui.Component;
 import com.codename1.ui.Container;
 import com.codename1.ui.Form;
 import com.codename1.ui.events.ActionListener;
+import com.codename1.ui.events.ActionSource;
 import com.codename1.ui.Label;
 import com.codename1.ui.TextField;
 import com.codename1.ui.events.ActionEvent;
+import com.codename1.ui.events.ActionEvent.Type;
+
 import java.lang.String;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.FlowLayout;
+import com.codename1.ui.util.EventDispatcher;
 import com.mycompany.command.*;
 
 
 
 public class Game extends Form {
-	private GameWorld _gameWorld;
+	private GameWorld gameWorld;
 	private MapView mapViewContainer;
 	private ScoreView scoreViewContainer;
 	private Container bottomContainer;
@@ -51,20 +56,21 @@ public class Game extends Form {
 	
 	
 	/*
-	 * new game constructor
+	 * Controller Class
 	 */
 	public Game() {
 		
 		setLayout(new BorderLayout());
 		
-		_gameWorld = GameWorld.get_Instance();
-		_gameWorld.init();
+		gameWorld = GameWorld.get_Instance();
+		gameWorld.init();
 		
-		mapViewContainer = new MapView(); 
-		scoreViewContainer = new ScoreView();
+				
+		mapViewContainer = new MapView(new FlowLayout(Component.CENTER)); 
+		scoreViewContainer = new ScoreView(new FlowLayout(Component.CENTER));
 		
-		_gameWorld.addObserver(mapViewContainer); 
-		_gameWorld.addObserver(scoreViewContainer); 
+		gameWorld.addObserver(mapViewContainer); 
+		gameWorld.addObserver(scoreViewContainer); 
 		
 		//Instantiate Contianers		
 		bottomContainer = new Container(new FlowLayout(Component.CENTER));
@@ -72,16 +78,16 @@ public class Game extends Form {
 		rightContainer = new Container(new BoxLayout(BoxLayout.Y_AXIS));
 		
 		//Instantiate Commands	
-		turnLeftCommand = new TurnLeftCommand("Turn Left");
-		turnRightCommand = new TurnRightCommand("Turn Right");
-		changeStratsCommand	= new ChangeStratsCommand("Change Stratagies");
-		accelerateCommand = new AccelerateCommand("Accelerate");
-		BrakeCommand = new BreakCommand("Break");
-		npcCyborg_ColCommand = new NPC_CollisionCommand("NPC Cyborg Collision");
-		eStation_ColCommand = new Estat_CollisionCommand("eStation Collision");
-		drone_ColCommand = new Drone_CollisionCommand("Drone Collision");
-		base_ColCommand = new Base_CollisionCommand("Base Collision");
-		tickGameClockCommand = new TickGameClockCommand("Tick Game Clock");
+		turnLeftCommand = new TurnLeftCommand("Turn Left", gameWorld);
+		turnRightCommand = new TurnRightCommand("Turn Right", gameWorld);
+		changeStratsCommand	= new ChangeStratsCommand("Change Stratagies", gameWorld);
+		accelerateCommand = new AccelerateCommand("Accelerate", gameWorld);
+		BrakeCommand = new BreakCommand("Break", gameWorld);
+		npcCyborg_ColCommand = new NPC_CollisionCommand("NPC Cyborg Collision", gameWorld);
+		eStation_ColCommand = new Estat_CollisionCommand("eStation Collision", gameWorld);
+		drone_ColCommand = new Drone_CollisionCommand("Drone Collision", gameWorld);
+		base_ColCommand = new Base_CollisionCommand("Base Collision", gameWorld);
+		tickGameClockCommand = new TickGameClockCommand("Tick Game Clock", gameWorld);
 		
 		//Instantiate GameButtons		
 		turnLeft_Button = new GameButton(turnLeftCommand);
@@ -117,17 +123,39 @@ public class Game extends Form {
 		addKeyListener('e', eStation_ColCommand);
 		addKeyListener('c', npcCyborg_ColCommand);
 		addKeyListener('t', tickGameClockCommand);
-				
+		
+		addKeyListener('1', base_ColCommand);
+		addKeyListener('2', base_ColCommand);
+		addKeyListener('3', base_ColCommand);
+		addKeyListener('4', base_ColCommand);
+		addKeyListener('5', base_ColCommand);
+		addKeyListener('6', base_ColCommand);
+		addKeyListener('7', base_ColCommand);
+		addKeyListener('8', base_ColCommand);
+		addKeyListener('9', base_ColCommand);
+		
 		//Add Containers to Border Layout 	
+
 		this.add(BorderLayout.NORTH,scoreViewContainer);
 		this.add(BorderLayout.CENTER,mapViewContainer);
 		this.add(BorderLayout.SOUTH,bottomContainer);
 		this.add(BorderLayout.WEST,leftContainer);
 		this.add(BorderLayout.EAST,rightContainer);
-			
+		//this.add(BorderLayout.CENTER_BEHAVIOR_TOTAL_BELOW,mainContainer);
 		this.show();
+		
+		
 	}
-
+	
+	/**
+	 * Handle the keyboard events for bases.
+	 */
+	public void keyTyped(ActionEvent event) {
+		int c = event.getKeyEvent();
+		System.out.println(c);
+	}
+	
+	
 	/*
 	 * takes users input from TextFeilds and determines game actions accordingly
 	 * Deprecated as of V2
@@ -149,43 +177,43 @@ public class Game extends Form {
 				if (sCommand.length() != 0)
 					switch (sCommand.charAt(0)) {
 					case 'a':
-						_gameWorld.pCyborg_accelerate();
+						gameWorld.pCyborg_accelerate();
 						break;
 					case 'b':
-						_gameWorld.pCyborg_brake();
+						gameWorld.pCyborg_brake();
 						break;
 					case 'l':
-						_gameWorld.pCyborg_turnLeft();
+						gameWorld.pCyborg_turnLeft();
 						break;
 					case 'r':
-						_gameWorld.pCyborg_turnRight();
+						gameWorld.pCyborg_turnRight();
 						break;
 					case 'c':
-						_gameWorld.pCyborg_cyborgCollision();
+						gameWorld.pCyborg_cyborgCollision();
 						break;
 					case 'e':
-						_gameWorld.pCyborg_eStationCollison();
+						gameWorld.pCyborg_eStationCollison();
 						break;
 					case 'g':
-						_gameWorld.pCyborg_droneCollison();
+						gameWorld.pCyborg_droneCollison();
 						break;
 					case 't':
-						_gameWorld.tickGameClock();
+						gameWorld.tickGameClock();
 						break;
 					case 'd':
-						_gameWorld.displayGameStatus();
+						gameWorld.displayGameStatus();
 						break;
 					case 'm':
-						_gameWorld.displayGameMap();
+						gameWorld.displayGameMap();
 						break;
 					case 'x':
-						_gameWorld.promptExitGame();
+						gameWorld.promptExitGame();
 						break;
 					case 'y':
-						_gameWorld.confirmExitGame();
+						gameWorld.confirmExitGame();
 						break;
 					case 'n':
-						_gameWorld.declineExitGame();
+						gameWorld.declineExitGame();
 						break;
 					case '1':
 					case '2':
@@ -198,7 +226,7 @@ public class Game extends Form {
 					case '9':
 						String str = String.valueOf(sCommand.charAt(0));
 						int inum = Integer.valueOf(str);
-						_gameWorld.pCyborg_BaseCollison(inum);
+						gameWorld.pCyborg_BaseCollison(inum);
 						break;
 					default:
 						System.out.println("no active keybinding");
