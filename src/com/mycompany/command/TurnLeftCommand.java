@@ -19,9 +19,12 @@ public class TurnLeftCommand extends Command {
 		this.targetGameWorld = gameworld;
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		targetGameWorld.pCyborg_turnLeft();
+		targetGameWorld.pCyborgturnLeft();
 		super.actionPerformed(evt);
 	}
 	

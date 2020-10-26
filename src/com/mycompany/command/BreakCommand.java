@@ -22,9 +22,12 @@ public class BreakCommand extends Command {
 		this.targetGameWorld = gameworld;
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		targetGameWorld.pCyborg_brake();
+		targetGameWorld.pCyborgbrake();
 		super.actionPerformed(evt);
 	}
 }

@@ -9,47 +9,44 @@ import java.util.Random;
 
 
 public class Base extends Fixed{
-	private int _sequenceNumber;
+	private int sequenceNumber;
 	
-	public Base(int sequenceNumber) {		
-	    Random random = new Random();
-	    float min = 0f;
-	    float max = 1000f;
-	    float r1 = min + random.nextFloat() * (max - min);
-	    float r2 = min + random.nextFloat() * (max - min);
-	    
-		final int r=0, g=128, b=0; //Green 
-	    
-	    super.set_point(new Point(r1,r2));
-	    super.set_size(50);		
-		super.set_color(r,g,b);
-		set_sequenceNumber(sequenceNumber);
+	/**
+	 * 
+	 * @param sequenceNumber
+	 * @param size
+	 * @param point
+	 * @param color
+	 */
+	public Base(int sequenceNumber, int size, Point point, int color) {	
+		super(size, point, color);
+		this.sequenceNumber = sequenceNumber;
 	}
 		
 	/**
 	 * Getter for the sequenceNumber of a Fixed Base Gameobject.
 	 * @return the sequenceNumber of a Fixed Base Gameobject.
 	 */
-	public int get_sequenceNumber() {
-		return _sequenceNumber;
+	public int getsequenceNumber() {
+		return sequenceNumber;
 	}
 
 	/**
 	 *Setter for the sequenceNumber of a Fixed Base Gameobject. 
 	 * @param the new the sequenceNumber of a Fixed Base Gameobject.
 	 */
-	public void set_sequenceNumber(int _sequenceNumber) {
-		if (this._sequenceNumber == 0 )
-			this._sequenceNumber = _sequenceNumber;
+	public void setsequenceNumber(int sequenceNumber) {
+		if (this.sequenceNumber == 0 )
+			this.sequenceNumber = sequenceNumber;
 	}
 
 	/**
 	 * prevents size from being changed after instantiation. 
 	 */
 	@Override
-	public void set_size(int size) {
-		if ( super.get_size() == 0) {
-			super.set_size(size);
+	public void setsize(int size) {
+		if ( super.getsize() == 0) {
+			super.setsize(size);
 		}
 	}
 
@@ -57,18 +54,18 @@ public class Base extends Fixed{
 	 * prevents location from being changed after instantiation. 
 	 */
 	@Override
-	public void set_point(Point point) {
-		if (super.get_point() == null )
-			super.set_point(point);
+	public void setpoint(Point point) {
+		if (super.getpoint() == null )
+			super.setpoint(point);
 	}
 	
 	/**
 	 * prevents color from being changed after instantiation. 
 	 */
 	@Override
-	public void set_color(int r, int g, int b) {
-		if (super.get_color() == 0)
-			super.set_color(r, g, b);
+	public void setcolor(int r, int g, int b) {
+		if (super.getcolor() == 0)
+			super.setcolor(r, g, b);
 	}
 
 	/**
@@ -78,7 +75,7 @@ public class Base extends Fixed{
 	public String toString() {
 		String parentDesc = super.toString();	
 		String myDesc = parentDesc
-		+"Sequence Number= " + this._sequenceNumber + " ";
+		+"Sequence Number= " + this.sequenceNumber + " ";
 		return myDesc;		
 	}
 	
@@ -91,10 +88,10 @@ public class Base extends Fixed{
 	            return false;
 	        }
 		  	Base test = (Base) obj;
-			return test._sequenceNumber == this._sequenceNumber 
-					&& test.get_color() == this.get_color()
-					&& test.get_point() == this.get_point() 
-					&& test.get_size() == this.get_size();
+			return test.sequenceNumber == this.sequenceNumber 
+					&& test.getcolor() == this.getcolor()
+					&& test.getpoint() == this.getpoint() 
+					&& test.getsize() == this.getsize();
 	}
 
 	/**
@@ -103,11 +100,11 @@ public class Base extends Fixed{
 	@Override
 	public int hashCode() {
 		int hash = 13;
-		hash = 31 * hash + this._sequenceNumber;
-		hash = 31 * hash + this.get_color();
-		hash = 31 * hash + this.get_size();
-		hash = 31 * hash + Float.floatToIntBits(this.get_point().getX());
-		hash = 31 * hash + Float.floatToIntBits(this.get_point().getY());
+		hash = 31 * hash + this.sequenceNumber;
+		hash = 31 * hash + this.getcolor();
+		hash = 31 * hash + this.getsize();
+		hash = 31 * hash + Float.floatToIntBits(this.getpoint().getX());
+		hash = 31 * hash + Float.floatToIntBits(this.getpoint().getY());
 		return hash;
 	}
 	

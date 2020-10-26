@@ -22,6 +22,9 @@ public class TickGameClockCommand extends Command {
 		this.targetGameWorld = gameworld;
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		targetGameWorld.tickGameClock();

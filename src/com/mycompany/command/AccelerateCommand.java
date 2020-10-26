@@ -22,10 +22,12 @@ public class AccelerateCommand extends Command {
 	}
 
 	
-	
+	/**
+	 * 
+	 */
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		targetGameWorld.pCyborg_accelerate();
+		targetGameWorld.pCyborgaccelerate();
 		super.actionPerformed(evt);
 	}
 }

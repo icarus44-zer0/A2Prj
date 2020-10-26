@@ -15,7 +15,10 @@ import com.codename1.ui.plaf.Border;
  */
 public class GameButton extends Button {
 
-	
+	/**
+	 * 
+	 * @param command
+	 */
 	public GameButton(Command command)
 	{
 		

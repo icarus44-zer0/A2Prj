@@ -19,10 +19,12 @@ public class TurnRightCommand extends Command {
 		this.targetGameWorld = gameworld;
 	}
 	
-	
+	/**
+	 * 
+	 */
 	@Override
 	public void actionPerformed(ActionEvent evt) {
-		targetGameWorld.pCyborg_turnRight();
+		targetGameWorld.pCyborgturnRight();
 		super.actionPerformed(evt);
 	}
 	

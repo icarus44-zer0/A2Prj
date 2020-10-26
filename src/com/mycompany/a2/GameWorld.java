@@ -1,524 +1,695 @@
 package com.mycompany.a2;
-import java.util.HashMap;
+
 import java.util.Observable;
-import java.util.Observer;
 import java.util.Random;
-import java.util.TreeMap;
+import com.codename1.charts.models.Point;
+import com.codename1.charts.util.ColorUtil;
+import com.mycompany.gui.MapViewContainer;
 
-/** Represents a GameWorld.
-* @author  Josh Poe 
-* @version 1.0
-* @since   202-09-28 
-*/
+/**
+ * Represents a GameWorld.
+ * 
+ * @author Josh Poe
+ * @version 1.0
+ * @since 202-09-28
+ */
+public class GameWorld extends Observable {
+	private static GameWorld instance = null;
 
+	private int gameWidth;
+	private int gameHeight;
+	private int lives;
+	private int timeElapsed;
+	private boolean exitFlag;
+	private boolean soundFlag;
+	private boolean strategyflag;
+	private int baseSequenceNumber;
+	private int baseCount;
+	private int npcCyborgCount;
+	private int droneCount;
+	private int eStationCount;
+	private int playerCount;
+	private Point intiBasePoint;
+	private PlayerCyborg playerCyborg;
+	private GameObjectCollection gameObjectCollection;
 
-public class GameWorld extends Observable{
-	private static GameWorld _instance = null; 
-	private HashMap<String,GameObject> _gameObjectMap;
-	
-	private final int _WIDTH = 1000;
-	private final int _HIEGTH = 1000;
-	private int _lives;
-	private int _timeElapsed;
-	private boolean _exitFlag;
-
-	
 	/**
-	 * Constructor 
+	 * Constructor
 	 */
 	private GameWorld() {
-		_gameObjectMap = new HashMap<>();
-		_lives = 3;
-		_timeElapsed = 0;
+		gameObjectCollection = new GameObjectCollection();
+		lives = 3;
+		timeElapsed = 0;
+		exitFlag = false;
+		soundFlag = false;
+		strategyflag = false;
+		baseSequenceNumber = 1;
+		baseCount = 4;
+		npcCyborgCount = 3;
+		droneCount = 4;
+		eStationCount = 4;
+		playerCount = 1;
 	}
-	
+
 	/**
-	 * Gets instance of Gameworld class 
+	 * Gets instance of Gameworld class
+	 * 
 	 * @return GameWorld instance
 	 */
-	public static GameWorld get_Instance() {
-		 if (_instance == null) 
-	        { 
-			 _instance = new GameWorld(); 
-	        } 
-	        return _instance; 
+	public static GameWorld getInstance() {
+		if (instance == null) {
+			instance = new GameWorld();
+		}
+		return instance;
 	}
-	
-	/**
-	 * initialize game objects 
-	 */
-	public void init() {
-		
-		Base base1 = new Base(1);
-		Base base2 = new Base(2);
-		Base base3 = new Base(3);
-		Base base4 = new Base(4);
 
-		Drone drone1 = new Drone();
-		Drone drone2 = new Drone();
-		Drone drone3 = new Drone();
-		Drone drone4 = new Drone();
+	/**
+	 * initialize game objects
+	 */
+	public void init(int gameWidth, int gameHeight) {
 		
-		EnergyStation eStation1 = new EnergyStation();
-		EnergyStation eStation2= new EnergyStation();
-		EnergyStation eStation3= new EnergyStation();
-		EnergyStation eStation4= new EnergyStation();
-				
-		Cyborg playerCyborg = new Cyborg(base1.get_point());
-		Cyborg cyborg1 = new Cyborg();
-		
-		_gameObjectMap.put("p1Cyborg",playerCyborg);
-		_gameObjectMap.put("Cyborg1",cyborg1);
-		
-		_gameObjectMap.put("Drone1",drone1);
-		_gameObjectMap.put("Drone2",drone2);
-		_gameObjectMap.put("Drone3",drone3);
-		_gameObjectMap.put("Drone4",drone4);
-		
-		_gameObjectMap.put("Base1",base1);
-		_gameObjectMap.put("Base2",base2);
-		_gameObjectMap.put("Base3",base3);
-		_gameObjectMap.put("Base4",base4);
-		
-		_gameObjectMap.put("eStation1",eStation1);
-		_gameObjectMap.put("eStation2",eStation2);
-		_gameObjectMap.put("eStation3",eStation3);
-		_gameObjectMap.put("eStation4",eStation4);
+		this.gameWidth = gameWidth;
+		this.gameHeight = gameHeight;
+
+		for (int i = 0; i < baseCount; i++) {
+			Base base = initBase();
+			if (i == 0)
+				intiBasePoint = new Point(base.getpoint().getX(), base.getpoint().getY());
+			;
+			gameObjectCollection.add(base);
+		}
+
+		for (int i = 0; i < playerCount; i++) {
+			playerCyborg = initPlayerCyborg();
+			gameObjectCollection.add(playerCyborg);
+		}
+
+		for (int i = 0; i < eStationCount; i++) {
+			EnergyStation eStation = initEnergyStation();
+			gameObjectCollection.add(eStation);
+		}
+
+		for (int i = 0; i < droneCount; i++) {
+			Drone drone = initDrone();
+			gameObjectCollection.add(drone);
+		}
+
+		for (int i = 0; i < npcCyborgCount; i++) {
+			NPCCyborg npcCyborg = initNPCyborg();
+			assignStrategy(npcCyborg);
+			gameObjectCollection.add(npcCyborg);
+		}
+	}
+
+	/**
+	 * 
+	 * @param npcCyborg
+	 */
+	private void assignStrategy(NPCCyborg npcCyborg) {
+		if (strategyflag == false) {
+			npcCyborg.setStrategy(new NPCAttackStratagy(npcCyborg));
+			strategyflag = true;
+		} else {
+			npcCyborg.setStrategy(new NPCNextBaseStratagy(npcCyborg));
+		}
 	}
 	
-	
+
+	/**
+	 * 
+	 * @return
+	 */
+	private PlayerCyborg initPlayerCyborg() {
+		Random random = new Random();
+		int r = 26, g = 188, b = 212; // Sea Blue
+
+		int energyLevel = 100;
+		int energyConsumptionRate = 10;
+		int damageLevel = 0;
+		int maxDamageLevel = 100;
+		int lastBaseReached = 1;
+		int maxBaseReached = 1;
+		int steeringDirection = 0;
+		int size = 50;
+		Point point = intiBasePoint;
+		int heading = random.nextInt(359) + 1;
+		int speed = random.nextInt(10 - 5) + 5;
+		int color = ColorUtil.rgb(r, g, b);
+
+		return PlayerCyborg.getInstance(energyLevel, energyConsumptionRate, damageLevel, maxDamageLevel,
+				lastBaseReached, maxBaseReached, steeringDirection, heading, speed, size, point, color);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	private NPCCyborg initNPCyborg() {
+		Random random = new Random();
+		Point point = setInitialPoint();
+
+		float min = 50f;
+		float max = 200f;
+		float deltaX = min + random.nextFloat() * (max - min);
+		float deltaY = min + random.nextFloat() * (max - min);
+
+		point.setX(point.getX() + deltaX);
+		point.setY(point.getY() + deltaY);
+
+		int r = 111, g = 23, b = 231; // Royal Purple
+
+		int energyLevel = 10000;
+		int energyConsumptionRate = 10;
+		int damageLevel = 0;
+		int maxDamageLevel = 10000;
+		int lastBaseReached = 1;
+		int maxBaseReached = 1;
+		int steeringDirection = 0;
+		int size = 50;
+		int heading = random.nextInt(359) + 1;
+		int speed = random.nextInt(10 - 5) + 5;
+		int color = ColorUtil.rgb(r, g, b);
+
+		return new NPCCyborg(energyLevel, energyConsumptionRate, damageLevel, maxDamageLevel, lastBaseReached,
+				maxBaseReached, steeringDirection, heading, speed, size, point, color);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	private Drone initDrone() {
+		Random random = new Random();
+		Point point = setInitialPoint();
+		int r = 219, g = 22, b = 224; // HOT PINK
+		int damageLevel = 0;
+		int size = 50;
+		int heading = random.nextInt(359) + 1;
+		int speed = random.nextInt(10 - 5) + 5;
+		int color = ColorUtil.rgb(r, g, b);
+		return new Drone(damageLevel, heading, speed, size, point, color);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	private Base initBase() {
+		Point point = setInitialPoint();
+		int r = 101, g = 247, b = 113; // Bright Green
+		int size = 50;
+		int color = ColorUtil.rgb(r, g, b);
+		return new Base(baseSequenceNumber++, size, point, color);
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	private EnergyStation initEnergyStation() {
+		Random random = new Random();
+		Point point = setInitialPoint();
+		int r = 180, g = 90, b = 11; // Burnt Orange
+		int size = random.nextInt(50 - 10) + 10;
+		int color = ColorUtil.rgb(r, g, b);
+		int capacity = size * random.nextInt(3 - 1) + 1;
+		return new EnergyStation(capacity, size, point, color);
+	}
+
+	private Point setInitialPoint() {
+		Random random = new Random();
+		float min = 0f;
+		float maxH = gameHeight;
+		float maxW = gameWidth;
+		float x = min + random.nextFloat() * (maxH - min);
+		float y = min + random.nextFloat() * (maxW - min);
+		return new Point(x, y);
+	}
+
 	/**
 	 * Getter for the lives of a the player cyborg.
+	 * 
 	 * @return the lives of a the player cyborg.
 	 */
-	public int get_lives() {
-		return _lives;
+	public int getlives() {
+		return lives;
 	}
 
 	/**
 	 * Setter for the lives of a the player cyborg.
+	 * 
 	 * @param retunrs the lives of a the player cyborg.
 	 */
-	public void set_lives(int _lives) {
-		this._lives = _lives;
+	public void setlives(int lives) {
+		this.lives = lives;
 	}
 
 	/**
-	 * Getter for the width of a the gameworld.
-	 * @return the width of a the gameworld.
+	 * @return the gameWidth
 	 */
-	public int get_width() {
-		return _WIDTH;
+	public int getGameWidth() {
+		return gameWidth;
 	}
 
 	/**
-	 * Getter for the heigth of a the gameworld.
-	 * @return the heigth of a the gameworld.
+	 * @param gameWidth the gameWidth to set
 	 */
-	public int get_hieght() {
-		return _HIEGTH;
+	public void setGameWidth(int gameWidth) {
+		this.gameWidth = gameWidth;
 	}
-	
-	/**
-	 * @return the _gameObjects
-	 */
-	public HashMap<String, GameObject> get_gameObjectMap() {
-		return _gameObjectMap;
-	}
-
 
 	/**
-	 * @return the _timeElapsed
+	 * @return the gameHeight
 	 */
-	public int get_timeElapsed() {
-		return _timeElapsed;
+	public int getGameHeight() {
+		return gameHeight;
 	}
 
-
-	/*
-	 * keyboard input "a"
-	 * causes the player Cyborg to incriment speed by one.
+	/**
+	 * @param gameHeight the gameHeight to set
 	 */
-	public void pCyborg_accelerate() {
-		Cyborg refCyborg = (Cyborg) _gameObjectMap.get("p1Cyborg");
-		int curSpeed = refCyborg.get_speed();
-		curSpeed+=1;
-		refCyborg.set_speed(curSpeed);
-		setChanged();
-		notifyObservers();
-		
-		
-		System.out.println("p1Cyborg"+ ": " + refCyborg);
-		System.out.println();
-	}
-	
-	/*
-	 * keyboard input "b"
-	 * causes the player cybog to decrease spped by one.
-	 */
-	public void pCyborg_brake() {
-		Cyborg refCyborg = (Cyborg) _gameObjectMap.get("p1Cyborg");
-		int curSpeed = refCyborg.get_speed();
-		refCyborg.set_speed(curSpeed-1);
-		setChanged();
-		notifyObservers();
-		
-		System.out.println("p1Cyborg"+ ": " + refCyborg);
-		System.out.println();
+	public void setGameHeight(int gameHeight) {
+		this.gameHeight = gameHeight;
 	}
 
-	/*
-	 * keyboard input "l"
-	 * causes the player cybog to turn left by 5 degrees.
+	/**
+	 * @return the timeElapsed
 	 */
-	public void pCyborg_turnLeft() {
-		Cyborg refCyborg = (Cyborg) _gameObjectMap.get("p1Cyborg");
-		refCyborg.set_steeringDirection(-5);
+	public int gettimeElapsed() {
+		return timeElapsed;
+	}
+
+	/**
+	 * @return the soundFlag
+	 */
+	public boolean getSoundFlag() {
+		return soundFlag;
+	}
+
+	/**
+	 * @return the soundFlag
+	 */
+	public String getSoundFlagStatus() {
+		return soundFlag == true ? "ON" : "OFF";
+	}
+
+	/**
+	 * @param soundFlag the soundFlag to set
+	 */
+	public void setSoundFlag(boolean soundFlag) {
+		this.soundFlag = soundFlag;
 		setChanged();
 		notifyObservers();
-		
-		System.out.println("p1Cyborg"+ ": " + refCyborg);
-		System.out.println();
+	}
+
+	/**
+	 * 
+	 * @return
+	 */
+	public GameObjectCollection getGameObjectCollection() {
+		return gameObjectCollection;
+	}
+
+	/**
+	 * 
+	 */
+	public void changeNPCStrategy() {
+		IIterator iterator = gameObjectCollection.getIterator();
+		while (iterator.hasNext()) {
+			GameObject gameObject = (GameObject) iterator.getNext();
+			if(gameObject instanceof NPCCyborg) {
+				NPCCyborg npcCyborg = (NPCCyborg)gameObject;
+				if(npcCyborg.getStrategy() instanceof NPCNextBaseStratagy){
+					npcCyborg.setStrategy(new NPCAttackStratagy(npcCyborg));
+				}else {
+					npcCyborg.setStrategy(new NPCNextBaseStratagy(npcCyborg));
+				}
+			}
+		}
+		setChanged();
+		notifyObservers();
+	}
+	
+	
+	/*
+	 * keyboard input "a" causes the player Cyborg to incriment speed by one.
+	 */
+	public void pCyborgaccelerate() {
+		int curSpeed = playerCyborg.getspeed();
+		curSpeed += 1;
+		playerCyborg.setspeed(curSpeed);
+		System.out.println("Player Cyborg" + ": " + playerCyborg);
+		setChanged();
+		notifyObservers();
 	}
 
 	/*
-	 * keyboard input "r"
-	 * causes the player cybog to turn right by 5 degrees.
+	 * keyboard input "b" causes the player cybog to decrease spped by one.
 	 */
-	public void pCyborg_turnRight() {
-		Cyborg refCyborg = (Cyborg) _gameObjectMap.get("p1Cyborg");
-		refCyborg.set_steeringDirection(5);
+	public void pCyborgbrake() {
+		int curSpeed = playerCyborg.getspeed();
+		playerCyborg.setspeed(curSpeed - 1);
+		System.out.println("Player Cyborg" + ": " + playerCyborg);
 		setChanged();
 		notifyObservers();
-		
-		System.out.println("p1Cyborg"+ ": " + refCyborg);
-		System.out.println();
 	}
-	
+
 	/*
-	 * Keyboard input "c"
-	 * Simulates collision with another cyborg
-	 * Causes damage to the player cyborg 
-	 * based off size and speed of the other cyborg. 
+	 * keyboard input "l" causes the player cybog to turn left by 5 degrees.
 	 */
-	public void pCyborg_cyborgCollision() {
+	public void pCyborgturnLeft() {
+		playerCyborg.setsteeringDirection(-5);
+		System.out.println("Player Cyborg" + ": " + playerCyborg);
+		setChanged();
+		notifyObservers();
+	}
+
+	/*
+	 * keyboard input "r" causes the player cybog to turn right by 5 degrees.
+	 */
+	public void pCyborgturnRight() {
+		playerCyborg.setsteeringDirection(5);
+		System.out.println("Player Cyborg" + ": " + playerCyborg);
+		setChanged();
+		notifyObservers();
+	}
+
+	/*
+	 * Keyboard input "c" Simulates collision with another cyborg Causes damage to
+	 * the player cyborg based off size and speed of the other cyborg.
+	 */
+	public void pCyborgcyborgCollision(NPCCyborg npcCyborg) {
+		Cyborg refNPCyborg = null;
 		
-		String str= "Cyborg1";
+		if (npcCyborg != null) {
+			refNPCyborg = npcCyborg;
+		}
+		else {
+			IIterator iterator = gameObjectCollection.getIterator();
+			while (iterator.hasNext()) {
+				GameObject gameObject = (GameObject) iterator.getNext();
+				if (gameObject instanceof NPCCyborg) {
+					refNPCyborg = (NPCCyborg) gameObject;
+					break;
+				}
+			}
+		}
 		
-		System.out.println();
-		System.out.println("Player Cyborg has collided with " +  str);
-		
-		Cyborg refNPCyborg = (Cyborg) _gameObjectMap.get(str);
-		Cyborg refCyborg = (Cyborg) _gameObjectMap.get("p1Cyborg");
-	
-		refCyborg.set_point(refNPCyborg.get_point());			
-		refCyborg.fadeColor();
-		int damage = 10 + 10*refNPCyborg.get_size()/100 + 10 *refCyborg.get_speed()/100;
-	
-		int curDamg = refCyborg.get_damageLevel();
-		refCyborg.set_damageLevel(curDamg+damage);
-		refCyborg.set_speed(refCyborg.get_speed());
-		
+		int damageTaken = 10 + 10 * refNPCyborg.getsize() / 100 + 10 * playerCyborg.getspeed() / 100;
+		int currentDamage = playerCyborg.getdamageLevel();
+		int npcDamageTaken = 10 + 10 * refNPCyborg.getsize() / 100 + 10 * refNPCyborg.getspeed() / 100;
+		int npcCurrrentDamg = refNPCyborg.getdamageLevel();
+
+		playerCyborg.setdamageLevel(currentDamage + damageTaken);
+		playerCyborg.setspeed(playerCyborg.getspeed());
+		playerCyborg.fadeColor();
+		playerCyborg.setpoint(refNPCyborg.getpoint());
+
+		refNPCyborg.setdamageLevel(npcCurrrentDamg + npcDamageTaken);
+		refNPCyborg.setspeed(refNPCyborg.getspeed()); // TODO create update speed method
 		refNPCyborg.fadeColor();
-		int damage2 = 10 + 10*refNPCyborg.get_size()/100 + 10 *refNPCyborg.get_speed()/100;
-	
-		int curDamg2 = refNPCyborg.get_damageLevel();
-		refNPCyborg.set_damageLevel(curDamg2+damage2);
-		
-		checkCyborgState(refCyborg, refCyborg.toString());
-		
-		refNPCyborg.set_speed(refNPCyborg.get_speed());
-		
+
+		checkCyborgState();
+
+		System.out.println("Player Cyborg has collided with NPC Cyborg");
+		System.out.println("Player Cyborg" + ": " + playerCyborg);
 		setChanged();
 		notifyObservers();
-		
-		System.out.println("p1Cyborg"+ ": " + refCyborg);
-		System.out.println();
 	}
 
-	
 	/*
-	 * keyboard input "1-9"
-	 * Simulates collision between player cyborg and base.
+	 * keyboard input "1-9" Simulates collision between player cyborg and base.
+	 * 
 	 * @param takes in the base the player cyborg is to move to.
 	 */
-	public void pCyborg_BaseCollison(int num) {
-		String str= "Base";
-		str = str+num;
-		
-		Cyborg refCyborg = (Cyborg) _gameObjectMap.get("p1Cyborg");
+	public void pCyborgBaseCollison(int sequenceNumber) {
 		Base refBase = null;
-		
-		if ((_gameObjectMap.get(str) == null)) {
-			System.out.println();
-			System.out.println("No Base at that location ");
-			return;
-		}
-		
-		System.out.println();
-		System.out.println("Player Cyborg has collided with " +  str);
-		
-		refBase = (Base) _gameObjectMap.get(str);
-		if ((refBase.get_sequenceNumber() - 1) == refCyborg.get_lastBaseReached()) {
-			refCyborg.set_lastBaseReached(refBase.get_sequenceNumber());
+
+		IIterator iterator = gameObjectCollection.getIterator();
+		while (iterator.hasNext()) {
+			GameObject gameObject = (GameObject) iterator.getNext();
+			if (gameObject instanceof Base) {
+				refBase = (Base) gameObject;
+				if (refBase.getsequenceNumber() == sequenceNumber)
+					break;
+			} else
+				System.out.println("No Base at that location ");
 		}
 
-		refCyborg.set_point(refBase.get_point());
-		
+		if ((refBase.getsequenceNumber() - 1) == playerCyborg.getlastBaseReached()) {
+			playerCyborg.setlastBaseReached(refBase.getsequenceNumber());
+		}
+		playerCyborg.setpoint(refBase.getpoint());
+
+		System.out.println("Player Cyborg has collided with Base");
+		System.out.println("Player Cyborg" + ": " + playerCyborg);
+
 		setChanged();
 		notifyObservers();
-	
-		System.out.println("p1Cyborg"+ ": " + refCyborg);
-		System.out.println();
 	}
-	
-	
+
 	/*
-	 * keyboard input "e"
-	 * Simulates collision between player cyborg and energy station
-	 * adds energy to the cyborg.
+	 * keyboard input "e" Simulates collision between player cyborg and energy
+	 * station adds energy to the cyborg.
 	 */
-	public void pCyborg_eStationCollison() {
-		
-		Random random = new Random();
-		int num = random.nextInt(4 - 1 + 1) + 1;
-		int out = 0; 
-		String str= "eStation";
-		str = str+num;
-		
-		
-		EnergyStation refStation = (EnergyStation) _gameObjectMap.get(str);
-		Cyborg refCyborg = (Cyborg) _gameObjectMap.get("p1Cyborg");
-		
-		while (refStation.get_capacity()==0) {
-			num = random.nextInt(4 - 1 + 1) + 1;
-			str= "eStation";
-			str = str+num;
-			refStation = (EnergyStation) _gameObjectMap.get(str);
-			out++;
-			if(out > 10) {
-				System.out.println("All eStations Empty");
-				return;
+	public void pCyborgeStationCollison() {
+		EnergyStation refStation = null;
+
+		IIterator theElements = gameObjectCollection.getIterator();
+		while (theElements.hasNext()) {
+			GameObject gameObject = (GameObject) theElements.getNext();
+			if (gameObject instanceof EnergyStation) {
+				refStation = (EnergyStation) gameObject;
+				if (refStation.getcapacity() != 0)
+					break;
 			}
 		}
-		
-		System.out.println();
-		System.out.println("Player Cyborg has collided with " +  str);
-		
-		refCyborg.set_point(refStation.get_point());
-		int eCpacity = refStation.get_capacity();
-		
-		refStation.set_capacity(0);
-		
-		int cyborgEng = refCyborg.get_energyLevel();
-		refCyborg.set_energyLevel(0);
-		
-		refCyborg.set_energyLevel(eCpacity + cyborgEng);
-		
+
+		playerCyborg.setpoint(refStation.getpoint());
+		int eCpacity = refStation.getcapacity();
+		refStation.setcapacity(0);
+
+		int curEnergy = playerCyborg.getenergyLevel();
+		playerCyborg.setenergyLevel(0);
+		playerCyborg.setenergyLevel(eCpacity + curEnergy);
+
+		EnergyStation energyStation = initEnergyStation();
+		gameObjectCollection.add(energyStation);
+
+		System.out.println("Player Cyborg has collided with Energy Station");
+		System.out.println("Player Cyborg" + ": " + playerCyborg);
+
 		setChanged();
 		notifyObservers();
-		
-		System.out.println("p1Cyborg"+ ": " + refCyborg);
-		System.out.println();
 	}
 
 	/*
-	 * keyboard input "g"
-	 * Simulates collision between player cyborg and drone 
-	 * Causes damage to the player cyborg 
-	 * based off size and speed of the drone. 
+	 * keyboard input "g" Simulates collision between player cyborg and drone Causes
+	 * damage to the player cyborg based off size and speed of the drone.
 	 */
-	public void pCyborg_droneCollison() {
-		
-		Random random = new Random();
-		int num = random.nextInt(4 - 1 + 1) + 1;
-		String str= "Drone";
-		str = str+num;
-		
-		System.out.println();
-		System.out.println("Player Cyborg has collided with " +  str);
-		
-		Drone refDrone = (Drone) _gameObjectMap.get(str);
-		Cyborg refCyborg = (Cyborg) _gameObjectMap.get("p1Cyborg");
-		
-		refCyborg.set_point(refDrone.get_point());			
-		refCyborg.fadeColor();
-		int damage = 5 + 10*refDrone.get_size()/100 + 10 *refCyborg.get_speed()/100;
-	
-		int curDamg = refCyborg.get_damageLevel();
-		refCyborg.set_damageLevel(curDamg+damage);
-		
-		checkCyborgState(refCyborg, refCyborg.toString());
-		
-		refCyborg.set_speed(refCyborg.get_speed());
-		
+	public void pCyborgdroneCollison() {
+		Drone refDrone = null;
+
+		IIterator theElements = gameObjectCollection.getIterator();
+		while (theElements.hasNext()) {
+			GameObject gameObject = (GameObject) theElements.getNext();
+			if (gameObject instanceof Drone) {
+				refDrone = (Drone) gameObject;
+				break;
+			}
+		}
+
+		playerCyborg.setpoint(refDrone.getpoint());
+		playerCyborg.fadeColor();
+
+		int damage = 5 + 10 * refDrone.getsize() / 100 + 10 * playerCyborg.getspeed() / 100;
+		int curDamg = playerCyborg.getdamageLevel();
+		playerCyborg.setdamageLevel(curDamg + damage);
+		checkCyborgState();
+
+		playerCyborg.setspeed(playerCyborg.getspeed());
+
+		System.out.println("Player Cyborg has collided with Drone");
+		System.out.println("Player Cyborg" + ": " + playerCyborg);
+
 		setChanged();
 		notifyObservers();
-		
-		System.out.println("p1Cyborg"+ ": " + refCyborg);
-		System.out.println();
 	}
 
-	
 	/*
-	 * keyboard input "t"
-	 * advances the gameclock forward
-	 * causes all movalble objects to move based off heading and speed.
+	 * keyboard input "t" advances the gameclock forward causes all movalble objects
+	 * to move based off heading and speed.
 	 */
 	public void tickGameClock() {
-		_timeElapsed++;	
-		
-		System.out.println("Time Elapesed " + _timeElapsed);
-		Cyborg refCyborg = (Cyborg) _gameObjectMap.get("p1Cyborg");
-		String str = refCyborg.toString();
-		
-		if (refCyborg.get_damageLevel() >= refCyborg.get_MAX_DAMAGE_LEVEL()) {
-			_lives--;
-			if(_lives>=0) {
-				int r=170, g=169, b=173; // initial color 
-				refCyborg.set_damageLevel(0);
-				refCyborg.set_color(r, g, b);
-				refCyborg.set_energyLevel(100);
-			}
-		}
-		
-		else if (refCyborg.get_energyLevel() <=0 ) {
-			_lives--;
-			if(_lives>=0) {
-				int r=170, g=169, b=173; // initial color 
-				refCyborg.set_damageLevel(0);
-				refCyborg.set_color(r, g, b);
-				refCyborg.set_energyLevel(100);
-			}
-		}
+		timeElapsed++;
 
-		if (_lives < 0) {
-			System.out.println("CYBORG HAS NO REMAINING LIVES");
-			System.out.println("GAMEOVER");
-			System.out.println("FINAL STATS");
-			System.out.println("PLAYER CYBORG");
-			System.out.println(str);
-			System.exit(42);
-			return;
-		}
-		
-		
-		else {
-			for (String key : _gameObjectMap.keySet()) {
-				if(_gameObjectMap.get(key) instanceof Movable) {
-					Movable mObj = (Movable)_gameObjectMap.get(key);
-					mObj.move();
-				}
-			}	
-		}
-		
+		System.out.println("Time Elapesed " + timeElapsed);
+		String str = playerCyborg.toString();
+
+		checkPlayerValues();
+		checkPlayerLives();
+		checkNPCValues();
+		moveAll();
+
 		setChanged();
 		notifyObservers();
 	}
-	
+
 	/**
-	 * Checks to see if the player cyborg is in a dead state 
-	 * has no energy or has reached max damage
-	 * @param refCyborg the player cyborg to check
-	 * @param str the player cyborg toString used to print final cyborg state.  
+	 * 
 	 */
-	public void checkCyborgState(Cyborg refCyborg, String str) {
-		if (refCyborg.get_damageLevel() >= refCyborg.get_MAX_DAMAGE_LEVEL()) {
-			_lives--;
-			if(_lives>=0) {
-				int r=170, g=169, b=173; // initial color 
-				refCyborg.set_damageLevel(0);
-				refCyborg.set_color(r, g, b);
-				refCyborg.set_energyLevel(100);
+	private void moveAll() {
+		IIterator theElements = gameObjectCollection.getIterator();
+		while (theElements.hasNext()) {
+			GameObject gameObject = (GameObject) theElements.getNext();
+			if (gameObject instanceof Movable) {
+				Movable mObj = (Movable) gameObject;
+				mObj.move();
+			}
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private void checkPlayerLives() {
+		if (lives < 0) {
+			System.out.println("Player Cyborg has no remaining lives");
+			System.out.println("GAMEOVER");
+			System.exit(42);
+			return;
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private void checkPlayerValues(){
+		if (playerCyborg.getdamageLevel() >= playerCyborg.getMAXDAMAGELEVEL()) {
+			lives--;
+			if (lives >= 0) {
+				int r = 170, g = 169, b = 173; // initial color
+				playerCyborg.setdamageLevel(0);
+				playerCyborg.setcolor(r, g, b);
+				playerCyborg.setenergyLevel(100);
 			}
 		}
 
-		if (_lives < 0) {
+		else if (playerCyborg.getenergyLevel() <= 0) {
+			lives--;
+			if (lives >= 0) {
+				int r = 170, g = 169, b = 173; // initial color
+				playerCyborg.setdamageLevel(0);
+				playerCyborg.setcolor(r, g, b);
+				playerCyborg.setenergyLevel(100);
+			}
+		}
+	}
+
+	/**
+	 * 
+	 */
+	private void checkNPCValues() {
+		IIterator theElements = gameObjectCollection.getIterator();
+		while (theElements.hasNext()) {
+			GameObject gameObject = (GameObject) theElements.getNext();
+			if (gameObject instanceof NPCCyborg) {
+				NPCCyborg npc = (NPCCyborg) gameObject;
+				if(npc.getmaxBaseReached() == baseCount) {
+					System.out.println("NPC HAS REACHED FINAL BASE");
+					System.out.println("GAMEOVER");
+					System.exit(42);
+					return;
+				}
+					
+			}
+		}
+	}
+
+	/**
+	 * Checks to see if the player cyborg is in a dead state has no energy or has
+	 * reached max damage
+	 * 
+	 * @param playerCyborg the player cyborg to check
+	 * @param str          the player cyborg toString used to print final cyborg
+	 *                     state.
+	 */
+	public void checkCyborgState() {
+		if (playerCyborg.getdamageLevel() >= playerCyborg.getMAXDAMAGELEVEL()) {
+			lives--;
+			if (lives >= 0) {
+				int r = 170, g = 169, b = 173; // initial color
+				playerCyborg.setdamageLevel(0);
+				playerCyborg.setcolor(r, g, b);
+				playerCyborg.setenergyLevel(100);
+			}
+		}
+
+		if (lives < 0) {
 			System.out.println("CYBORG HAS NO REMAINING LIVES");
 			System.out.println("GAMEOVER");
 			System.out.println("FINAL STATS");
 			System.out.println("PLAYER CYBORG");
-			System.out.println(str);
+			System.out.println(playerCyborg);
 			System.exit(42);
 			return;
 		}
 		setChanged();
 		notifyObservers();
 	}
-	
-	
-	/*
-	 * keyboard input "d"
-	 * displays the current status of the player cyborg.
-	 */
-	@Deprecated
-	public void displayGameStatus() {
-		System.out.println();
-		Cyborg refCyborg = (Cyborg) _gameObjectMap.get("p1Cyborg");
-		
-		double xVal = refCyborg.get_point().getX();
-		double rxVal = Math.round(xVal*10.0)/10.0;
-		double yVal = refCyborg.get_point().getY();
-		double ryVal = Math.round(yVal*10.0)/10.0;
-		String Locaction = "Location= " + "(" + rxVal + "," + ryVal + "), ";
-		
-		System.out.println("p1Cyborg");
-		System.out.println("Lives: " + _lives);
-		System.out.println("Time Elapsed: "+ _timeElapsed);
-		System.out.println("Player Cyborg: ");
-		System.out.println("Last Base Reached: " + refCyborg.get_lastBaseReached());
-		System.out.println("Energy Level: " + refCyborg.get_energyLevel());
-		System.out.println("Damage Level: " + refCyborg.get_damageLevel());
-		System.out.println("Location: " + Locaction);
-		System.out.println();
-	}
-	
-	/*
-	 * Keybaord input "m"
-	 * prints the values of all of the GameObjects to the console.
-	 */
-	@Deprecated
-	public void displayGameMap() {
-		System.out.println();
-		for (String key : _gameObjectMap.keySet()) {
-			System.out.println(key + ": " + _gameObjectMap.get(key));
-		}
-		System.out.println();
-	}
-	
 
 	/*
-	 * Keyboard input "x" d
-	 * prompts the user to the exit the game. 
+	 * Keyboard input "x" d prompts the user to the exit the game.
 	 */
+	@Deprecated
 	public void promptExitGame() {
 		System.out.println();
 		System.out.println("Would you like to end the game");
 		System.out.println("y: yes");
 		System.out.println("n: no");
 		System.out.println();
-		this._exitFlag = true;
+		this.exitFlag = true;
 	}
-	
-	
-	/*
-	 * Keyboard input "y"
-	 * confirms the user to exit the game.
-	 */
-	public void confirmExitGame() {
-		if (this._exitFlag == true) {
-		System.out.println("\n \n \n \n \n \nThe Enrichment Center is committed to the well being of all participants.");
-		System.exit(42);
-		}
-	}
-	
 
 	/*
-	 * Keyboard input "n"
-	 * confirms to decline the user exiting the game. 
+	 * Keyboard input "y" confirms the user to exit the game.
 	 */
-	public void declineExitGame() {
-		this._exitFlag = false;
+	@Deprecated
+	public void confirmExitGame() {
+		if (this.exitFlag == true) {
+			System.out.println(
+					"\n \n \n \n \n \nThe Enrichment Center is committed to the well being of all participants.");
+			System.exit(42);
+		}
 	}
-		
+
+	/*
+	 * Keyboard input "n" confirms to decline the user exiting the game.
+	 */
+	@Deprecated
+	public void declineExitGame() {
+		this.exitFlag = false;
+	}
+
+	/*
+	 * keyboard input "d" displays the current status of the player cyborg.
+	 */
+	@Deprecated
+	public void displayGameStatus() {
+		double xVal = playerCyborg.getpoint().getX();
+		double rxVal = Math.round(xVal * 10.0) / 10.0;
+		double yVal = playerCyborg.getpoint().getY();
+		double ryVal = Math.round(yVal * 10.0) / 10.0;
+		String Locaction = "Location= " + "(" + rxVal + "," + ryVal + "), ";
+
+		System.out.println("p1Cyborg");
+		System.out.println("Lives: " + lives);
+		System.out.println("Time Elapsed: " + timeElapsed);
+		System.out.println("Player Cyborg: ");
+		System.out.println("Last Base Reached: " + playerCyborg.getlastBaseReached());
+		System.out.println("Energy Level: " + playerCyborg.getenergyLevel());
+		System.out.println("Damage Level: " + playerCyborg.getdamageLevel());
+		System.out.println("Location: " + Locaction);
+		System.out.println();
+	}
 }
