@@ -1,4 +1,4 @@
-package com.mycompany.a2;
+package com.mycompany.a3;
 
 import java.util.ArrayList;
 
@@ -10,7 +10,7 @@ public class GameObjectCollection implements ICollection {
 	}
 
 	/**
-	 * 
+	 * adds objects to the gameobjects collection 
 	 */
 	@Override
 	public void add(Object object) {
@@ -19,7 +19,8 @@ public class GameObjectCollection implements ICollection {
 	}
 
 	/**
-	 * 
+	 * retuns the iterator object 
+	 * @return IIterator
 	 */
 	@Override
 	public IIterator getIterator() {
@@ -27,22 +28,20 @@ public class GameObjectCollection implements ICollection {
 	}
 
 	/**
-	 * 
-	 * @author jp
-	 *
+	 *Private inner calss to implement the iterator interface 
 	 */
 	private class gameObjectIterator implements IIterator {
 		private int index;
 
 		/**
-		 * 
+		 * sets iterator to -1 
 		 */
 		public gameObjectIterator() {
 			index = -1;
 		}
 
 		/**
-		 * 
+		 * used by iterator pattern 
 		 */
 		public boolean hasNext() {
 		if (gameObjectCollection.size ( ) <= 0) 

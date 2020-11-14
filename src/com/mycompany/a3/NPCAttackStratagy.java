@@ -1,4 +1,4 @@
-package com.mycompany.a2;
+package com.mycompany.a3;
 
 import com.codename1.charts.models.Point;
 import com.codename1.util.MathUtil;
@@ -6,8 +6,7 @@ import com.codename1.util.MathUtil;
 public class NPCAttackStratagy implements IStrategy {
 	private NPCCyborg npcCyborg;
 	private PlayerCyborg playerCyborg;
-	private Point playerLocation;
-	private Point npcLocation;
+
 
 	/**
 	 * 
@@ -19,18 +18,16 @@ public class NPCAttackStratagy implements IStrategy {
 	}
 	
 	/**
-	 * 
+	 * apply method 
 	 */
 	@Override
 	public void apply() {
-		setLocations();
 		
 		if (isCollision(npcCyborg, playerCyborg)) {
 			GameWorld gameWorld = GameWorld.getInstance();
 			
 			gameWorld.pCyborgcyborgCollision(npcCyborg);
 			
-			setLocations();
 		}
 		
 		Point npcLocation = npcCyborg.getpoint();
@@ -71,11 +68,5 @@ public class NPCAttackStratagy implements IStrategy {
 		return (c_xLoc <= b_xMax && c_xLoc >= b_xMin && c_yLoc <= b_yMax && c_yLoc >= b_yMin);
 	}
 
-	/**
-	 * 
-	 */
-	private void setLocations() {
-		npcLocation = npcCyborg.getpoint();
-		playerLocation = playerCyborg.getpoint();
-	}
+
 }

@@ -1,9 +1,10 @@
-package com.mycompany.a2;
+package com.mycompany.a3;
 
 import java.util.Observable;
 import java.util.Random;
 import com.codename1.charts.models.Point;
 import com.codename1.charts.util.ColorUtil;
+import com.codename1.ui.Display;
 import com.mycompany.gui.MapViewContainer;
 
 /**
@@ -140,6 +141,7 @@ public class GameWorld extends Observable {
 				lastBaseReached, maxBaseReached, steeringDirection, heading, speed, size, point, color);
 	}
 
+	
 	/**
 	 * 
 	 * @return
@@ -210,9 +212,9 @@ public class GameWorld extends Observable {
 		Random random = new Random();
 		Point point = setInitialPoint();
 		int r = 180, g = 90, b = 11; // Burnt Orange
-		int size = random.nextInt(50 - 10) + 10;
+		int size = random.nextInt(40 + 1) + 10;
 		int color = ColorUtil.rgb(r, g, b);
-		int capacity = size * random.nextInt(3 - 1) + 1;
+		int capacity = size * random.nextInt(3 + 1) + 1;
 		return new EnergyStation(capacity, size, point, color);
 	}
 
@@ -321,11 +323,14 @@ public class GameWorld extends Observable {
 				NPCCyborg npcCyborg = (NPCCyborg)gameObject;
 				if(npcCyborg.getStrategy() instanceof NPCNextBaseStratagy){
 					npcCyborg.setStrategy(new NPCAttackStratagy(npcCyborg));
+					npcCyborg.setmaxBaseReached(npcCyborg.getmaxBaseReached()+1);
 				}else {
 					npcCyborg.setStrategy(new NPCNextBaseStratagy(npcCyborg));
+					npcCyborg.setmaxBaseReached(npcCyborg.getmaxBaseReached()+1);
 				}
 			}
 		}
+		checkNPCValues();
 		setChanged();
 		notifyObservers();
 	}
@@ -524,13 +529,10 @@ public class GameWorld extends Observable {
 		timeElapsed++;
 
 		System.out.println("Time Elapesed " + timeElapsed);
-		String str = playerCyborg.toString();
-
 		checkPlayerValues();
 		checkPlayerLives();
 		checkNPCValues();
 		moveAll();
-
 		setChanged();
 		notifyObservers();
 	}
@@ -556,7 +558,7 @@ public class GameWorld extends Observable {
 		if (lives < 0) {
 			System.out.println("Player Cyborg has no remaining lives");
 			System.out.println("GAMEOVER");
-			System.exit(42);
+			Display.getInstance().exitApplication();
 			return;
 		}
 	}
@@ -598,7 +600,7 @@ public class GameWorld extends Observable {
 				if(npc.getmaxBaseReached() == baseCount) {
 					System.out.println("NPC HAS REACHED FINAL BASE");
 					System.out.println("GAMEOVER");
-					System.exit(42);
+					Display.getInstance().exitApplication();
 					return;
 				}
 					
@@ -631,7 +633,7 @@ public class GameWorld extends Observable {
 			System.out.println("FINAL STATS");
 			System.out.println("PLAYER CYBORG");
 			System.out.println(playerCyborg);
-			System.exit(42);
+			Display.getInstance().exitApplication();
 			return;
 		}
 		setChanged();
@@ -659,7 +661,7 @@ public class GameWorld extends Observable {
 		if (this.exitFlag == true) {
 			System.out.println(
 					"\n \n \n \n \n \nThe Enrichment Center is committed to the well being of all participants.");
-			System.exit(42);
+			Display.getInstance().exitApplication();
 		}
 	}
 

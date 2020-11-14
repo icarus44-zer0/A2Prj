@@ -1,4 +1,4 @@
-package com.mycompany.a2;
+package com.mycompany.a3;
 /** Represents a Game.
 * @author  Josh Poe 
 * @version 1.0
@@ -6,28 +6,19 @@ package com.mycompany.a2;
 */
 
 
-import com.codename1.ui.Command;
+import com.codename1.charts.util.ColorUtil;
 import com.codename1.ui.Component;
 import com.codename1.ui.Container;
 import com.codename1.ui.Form;
-import com.codename1.ui.events.ActionListener;
-import com.codename1.ui.events.ActionSource;
-import com.codename1.ui.geom.Dimension;
 import com.codename1.ui.Label;
-import com.codename1.ui.TextField;
 import com.codename1.ui.Toolbar;
-import com.codename1.ui.events.ActionEvent;
-import com.codename1.ui.events.ActionEvent.Type;
-
-import java.lang.String;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.FlowLayout;
-import com.codename1.ui.util.EventDispatcher;
 import com.mycompany.command.*;
 import com.mycompany.gui.MapViewContainer;
 import com.mycompany.gui.ScoreViewContainer;
-import com.mycompany.gui.SideMenuItemCheckBoxForm;
+import com.mycompany.gui.SideMenuItemForm;
 
 
 
@@ -226,15 +217,16 @@ public class Game extends Form {
 		
 		Label gameLabel = new Label("Keep On Track Game");
 		gameToolbar.setTitleComponent(gameLabel);
-		gameToolbar.addComponentToSideMenu(new SideMenuItemCheckBoxForm(gameToolbar));	
-		
+		gameToolbar.addComponentToSideMenu(new SideMenuItemForm(gameToolbar));	
+
 		HelpCommand helpCommand = new HelpCommand("Help");
-		
 		ExitGameCommand exitGameCommand = new ExitGameCommand("Exit Game"); 
+		
 		addKeyListener('x', exitGameCommand);
 		
 		gameToolbar.addCommandToRightBar(helpCommand);
 		gameToolbar.addCommandToOverflowMenu(exitGameCommand);
+				
 	}
 
 	/**

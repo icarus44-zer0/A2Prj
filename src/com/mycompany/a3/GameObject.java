@@ -1,4 +1,4 @@
-package com.mycompany.a2;
+package com.mycompany.a3;
 import com.codename1.charts.util.ColorUtil;
 import com.codename1.charts.models.Point;
 
@@ -97,28 +97,6 @@ public abstract class GameObject {
 		return super.equals(obj);
 	}
 	
-//	/**
-//	 * tostring for game objects  
-//	 */
-//	@Override
-//	public String toString() {	
-//		
-//		double xVal = this.getpoint().getX();
-//		double rxVal = Math.round(xVal*10.0)/10.0;
-//		double yVal = this.getpoint().getY();
-//		double ryVal = Math.round(yVal*10.0)/10.0;
-//		
-//		String myDesc =
-//		"Location= " + "(" + rxVal + "," + ryVal + "), " 
-//		+ "Color= " + "[" 
-//		+ ColorUtil.red(this.getcolor()) + ","
-//		+ ColorUtil.green(this.getcolor()) + ","
-//		+ ColorUtil.blue(this.getcolor()) + "], "
-//		+ "Size= " + this.getsize() + ", ";
-//		return myDesc ;
-//	}
-	
-	
 	/**
 	 * tostring for game objects  
 	 */
@@ -131,8 +109,30 @@ public abstract class GameObject {
 		double ryVal = Math.round(yVal*10.0)/10.0;
 		
 		String myDesc =
-		"Location= " + "(" + rxVal + ", " + ryVal + "), " ;
+		"Location= " + "(" + rxVal + "," + ryVal + "), " 
+		+ "Color= " + "[" 
+		+ ColorUtil.red(this.getcolor()) + ","
+		+ ColorUtil.green(this.getcolor()) + ","
+		+ ColorUtil.blue(this.getcolor()) + "], "
+		+ "Size= " + this.getsize() + ", ";
 		return myDesc ;
 	}
+	
+//	
+//	/**
+//	 * tostring for game objects  
+//	 */
+//	@Override
+//	public String toString() {	
+//		
+//		double xVal = this.getpoint().getX();
+//		double rxVal = Math.round(xVal*10.0)/10.0;
+//		double yVal = this.getpoint().getY();
+//		double ryVal = Math.round(yVal*10.0)/10.0;
+//		
+//		String myDesc =
+//		"Location= " + "(" + rxVal + ", " + ryVal + "), " ;
+//		return myDesc ;
+//	}
 	
 }

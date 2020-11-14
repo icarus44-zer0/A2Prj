@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.mycompany.a2;
+package com.mycompany.a3;
 
 import com.codename1.charts.models.Point;
 
@@ -76,11 +76,5 @@ public class NPCCyborg extends Cyborg {
 		String myDesc = parentDesc
 				+ "Strategy= " + strategy.getClass().getSimpleName();
 		return myDesc;
-	}
-	
-	
-	
-	
-	//TODO update tostring method 
-	
+	}	
 }

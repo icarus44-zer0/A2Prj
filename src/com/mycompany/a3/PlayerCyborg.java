@@ -1,4 +1,4 @@
-package com.mycompany.a2;
+package com.mycompany.a3;
 
 import com.codename1.charts.models.Point;
 import com.codename1.charts.util.ColorUtil;
@@ -63,39 +63,5 @@ public class PlayerCyborg extends Cyborg {
 				maxBaseReached, steeringDirection, heading, speed, size, point, color);
 		
 	}
-	
-	/**
-	 * 
-	 * @param energyLevel
-	 * @param energyConsumptionRate
-	 * @param damageLevel
-	 * @param lastBaseReached
-	 * @param maxBaseReached
-	 * @param steeringDirection
-	 * @param heading
-	 * @param speed
-	 * @param size
-	 * @param point
-	 * @param color
-	 */
-	public void initPlayerCyborg(int energyLevel, int energyConsumptionRate, int damageLevel, int lastBaseReached, 
-			int maxBaseReached, int steeringDirection,
-			int heading, int speed, int size, Point point, int color) {	
-			
-			int r = ColorUtil.red(color), g = ColorUtil.green(color), b = ColorUtil.blue(color);
-			setenergyLevel(energyLevel);
-			setenergyConsumptionRate(energyConsumptionRate);
-			setdamageLevel(damageLevel);
-			setlastBaseReached(lastBaseReached);
-			setmaxBaseReached(maxBaseReached);
-			setsteeringDirection(steeringDirection);
-			setheading(heading);
-			setspeed(speed);
-			setsize(size);
-			setpoint(point);
-			setcolor(r, g, b);
-			
-	}
-
 }
 

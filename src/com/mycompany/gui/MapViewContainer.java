@@ -18,15 +18,15 @@ import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.layouts.Layout;
 import com.codename1.ui.plaf.Border;
-import com.mycompany.a2.Base;
-import com.mycompany.a2.Drone;
-import com.mycompany.a2.EnergyStation;
-import com.mycompany.a2.GameObject;
-import com.mycompany.a2.GameObjectCollection;
-import com.mycompany.a2.GameWorld;
-import com.mycompany.a2.IIterator;
-import com.mycompany.a2.NPCCyborg;
-import com.mycompany.a2.PlayerCyborg;
+import com.mycompany.a3.Base;
+import com.mycompany.a3.Drone;
+import com.mycompany.a3.EnergyStation;
+import com.mycompany.a3.GameObject;
+import com.mycompany.a3.GameObjectCollection;
+import com.mycompany.a3.GameWorld;
+import com.mycompany.a3.IIterator;
+import com.mycompany.a3.NPCCyborg;
+import com.mycompany.a3.PlayerCyborg;
 
 /**
  * @author Icarus44
@@ -44,7 +44,7 @@ public class MapViewContainer extends Container implements Observer {
 		
 		setStyle();
 		setTextArea();
-		this.add(gameTextArea);
+		//this.add(gameTextArea);
 	}
 
 	/**

@@ -5,13 +5,13 @@ package com.mycompany.command;
 
 import com.codename1.ui.Command;
 import com.codename1.ui.events.ActionEvent;
-import com.mycompany.a2.GameObject;
-import com.mycompany.a2.GameObjectCollection;
-import com.mycompany.a2.GameWorld;
-import com.mycompany.a2.IIterator;
-import com.mycompany.a2.NPCAttackStratagy;
-import com.mycompany.a2.NPCCyborg;
-import com.mycompany.a2.NPCNextBaseStratagy;
+import com.mycompany.a3.GameObject;
+import com.mycompany.a3.GameObjectCollection;
+import com.mycompany.a3.GameWorld;
+import com.mycompany.a3.IIterator;
+import com.mycompany.a3.NPCAttackStratagy;
+import com.mycompany.a3.NPCCyborg;
+import com.mycompany.a3.NPCNextBaseStratagy;
 
 /**
  * @author Icarus44

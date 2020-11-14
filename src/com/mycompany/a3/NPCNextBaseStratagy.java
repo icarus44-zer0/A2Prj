@@ -1,4 +1,4 @@
-package com.mycompany.a2;
+package com.mycompany.a3;
 
 import com.codename1.charts.models.Point;
 import com.codename1.util.MathUtil;
@@ -22,7 +22,7 @@ public class NPCNextBaseStratagy implements IStrategy {
 	}
 	
 	/**
-	 * 
+	 * apply method 
 	 */
 	@Override
 	public void apply() {

@@ -19,10 +19,8 @@ public class HelpCommand extends Command {
 		Command[] cmds = new Command[]{cOk};
 		TextArea myTA = new TextArea();
 		setTextArea(myTA);
-		
 		Dialog.show("Game Information", myTA, cmds);
 		super.actionPerformed(evt);
-		
 	}
 
 	/**
@@ -31,7 +29,7 @@ public class HelpCommand extends Command {
 	 */
 	private void setTextArea(TextArea myTA) {
 		String helpString = new String();
-		helpString = "Command Key Bindings \n"
+		helpString = "Key Bindings \n"
 				+ "Accelerate \t a \n"
 				+ "Brake \t b \n"
 				+ "Left turn \t l \n"
@@ -43,7 +41,6 @@ public class HelpCommand extends Command {
 				+ "Tick \t t \n" 
 				+ "Exit \t x \n";
 		myTA.setText(helpString);
-		
 	}
 	
 }

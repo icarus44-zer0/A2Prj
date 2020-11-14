@@ -1,4 +1,4 @@
-package com.mycompany.a2;
+package com.mycompany.a3;
 /** Represents a Sterable Interface.
 * @author  Josh Poe 
 * @version 1.0

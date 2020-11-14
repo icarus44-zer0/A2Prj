@@ -9,8 +9,8 @@ import com.codename1.charts.util.ColorUtil;
 import com.codename1.ui.Container;
 import com.codename1.ui.Label;
 import com.codename1.ui.layouts.Layout;
-import com.mycompany.a2.GameWorld;
-import com.mycompany.a2.PlayerCyborg;
+import com.mycompany.a3.GameWorld;
+import com.mycompany.a3.PlayerCyborg;
 
 /**
  * @author Icarus44
@@ -61,6 +61,9 @@ public class ScoreViewContainer extends Container implements Observer {
 		revalidate();
 	}
 	
+	/**
+	 * initialize the score view components 
+	 */
 	private void init() {
 		setLabels();
 		setValueLabels();
@@ -70,6 +73,9 @@ public class ScoreViewContainer extends Container implements Observer {
 	}
 
 
+	/**
+	 * add labels to the form
+	 */
 	private void addLables() {
 		this.add(timeLabel);
 		this.add(timeValueLabel);
@@ -85,6 +91,9 @@ public class ScoreViewContainer extends Container implements Observer {
 		this.add(soundValueLabel);
 	}
 		
+	/**
+	 * sets the style for all labels 
+	 */
 	private void setForeGroundColor() {
 		 timeLabel.getAllStyles().setFgColor(ColorUtil.BLUE);
 		 timeValueLabel.getAllStyles().setFgColor(ColorUtil.BLUE);
@@ -106,6 +115,9 @@ public class ScoreViewContainer extends Container implements Observer {
 	}
 
 
+	/**
+	 * configurs the style for all labels 
+	 */
 	private void setPadding() {
 		 timeLabel.getAllStyles().setPadding(RIGHT,2);
 		 timeValueLabel.getAllStyles().setPadding(RIGHT,2);
@@ -127,6 +139,9 @@ public class ScoreViewContainer extends Container implements Observer {
 	}
 
 
+	/**
+	 * sets values for all labels 
+	 */
 	private void setLabels() {
 		timeLabel =  new Label("Time:");
 		livesLabel =  new Label("Lives Remaining:");
@@ -136,6 +151,9 @@ public class ScoreViewContainer extends Container implements Observer {
 		soundLabel =  new Label("Sound:");
 	}
 	
+	/*
+	 * creates the labels that will be updated by the observer  
+	 */
 	private void setValueLabels() {
 		timeValueLabel =  new Label();
 		livesValueLabel =  new Label();
