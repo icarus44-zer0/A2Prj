@@ -3,7 +3,6 @@ package com.mycompany.command;
 import com.codename1.ui.CheckBox;
 import com.codename1.ui.Command;
 import com.codename1.ui.Dialog;
-import com.codename1.ui.TextArea;
 import com.codename1.ui.events.ActionEvent;
 
 public class SideMenuAboutCommand extends Command {

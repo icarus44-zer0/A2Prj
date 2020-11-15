@@ -4,13 +4,10 @@ import com.codename1.charts.util.ColorUtil;
 import com.codename1.ui.CheckBox;
 import com.codename1.ui.Form;
 import com.codename1.ui.Toolbar;
-import com.mycompany.a3.GameButton;
 import com.mycompany.a3.GameWorld;
 import com.mycompany.command.SideMenuAboutCommand;
 import com.mycompany.command.AccelerateCommand;
-import com.mycompany.command.SideMenuAccelerateCommand;
 import com.mycompany.command.SideMenuSoundItemCommand;
-import com.mycompany.command.TurnRightCommand;
 
 public class SideMenuItemForm extends Form {
 	

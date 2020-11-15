@@ -7,6 +7,7 @@ package com.mycompany.a3;
 
 import com.codename1.charts.models.Point;
 import com.codename1.charts.util.ColorUtil;
+import com.codename1.ui.Graphics;
 
 
 
@@ -209,7 +210,7 @@ public abstract class Cyborg extends Movable implements ISteerable {
 		int r= ColorUtil.red(super.getcolor()) * (((1 - fade) / 255 + fade) * 255); 
 		int g= ColorUtil.green(super.getcolor()) * (((1 - fade) / 255 + fade) * 255);
 		int b= ColorUtil.blue(super.getcolor()) * (((1 - fade) / 255 + fade) * 255);
-		 super.setcolor(r, g, b);		  
+		 super.setColor(r, g, b);		  
 	}
 	
 	/**
@@ -252,9 +253,9 @@ public abstract class Cyborg extends Movable implements ISteerable {
 	 * prevents Movable Cyborg Gameobject from changing size.
 	 */
 	@Override
-	public void setsize(int size) {
-		if (super.getsize() == 0)
-			super.setsize(size);
+	public void setSize(int size) {
+		if (super.getSize() == 0)
+			super.setSize(size);
 	}
 
 	/**
@@ -267,7 +268,7 @@ public abstract class Cyborg extends Movable implements ISteerable {
 		super.setheading(steeringDirection + super.getheading());
 
 	}
-
+	
 	/**
 	 *Overides toString for Movable Cyborg Gameobject 
 	 */
@@ -300,8 +301,8 @@ public abstract class Cyborg extends Movable implements ISteerable {
 				&& test.MAXSPEED == this.MAXSPEED
 				&& test.steeringDirection == this.steeringDirection 
 				&& test.getcolor() == this.getcolor()
-				&& test.getpoint() == this.getpoint() 
-				&& test.getsize() == this.getsize()
+				&& test.getPoint() == this.getPoint() 
+				&& test.getSize() == this.getSize()
 				&& test.getspeed() == this.getspeed() 
 				&& test.getheading() == this.getheading(); 
 	}
@@ -320,11 +321,11 @@ public abstract class Cyborg extends Movable implements ISteerable {
 		hash = 31 * hash + this.MAXSPEED;
 		hash = 31 * hash + this.steeringDirection;
 		hash = 31 * hash + this.getcolor();
-		hash = 31 * hash + this.getsize();
+		hash = 31 * hash + this.getSize();
 		hash = 31 * hash + this.getspeed();
 		hash = 31 * hash + this.getheading();
-		hash = 31 * hash + Float.floatToIntBits(this.getpoint().getX());
-		hash = 31 * hash + Float.floatToIntBits(this.getpoint().getY());
+		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getX());
+		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getY());
 		return hash;
 	}
 

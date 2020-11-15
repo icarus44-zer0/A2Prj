@@ -1,6 +1,8 @@
 package com.mycompany.a3;
 
 import com.codename1.charts.models.Point;
+import com.codename1.charts.util.ColorUtil;
+import com.codename1.ui.Graphics;
 /** Represents a Energy Station GameObject.
 * @author  Josh Poe 
 * @version 1.0
@@ -45,9 +47,9 @@ public class EnergyStation extends Fixed {
 	 * prevents size from being changed after instantiation. 
 	 */
 	@Override
-	public void setsize(int size) {
-		if ( super.getsize() == 0) {
-			super.setsize(size);
+	public void setSize(int size) {
+		if ( super.getSize() == 0) {
+			super.setSize(size);
 		}
 	}
 
@@ -55,18 +57,30 @@ public class EnergyStation extends Fixed {
 	 * prevents location from being changed after instantiation. 
 	 */
 	@Override
-	public void setpoint(Point point) {
-		if (super.getpoint() == null )
-			super.setpoint(point);
+	public void setPoint(Point point) {
+		if (super.getPoint() == null )
+			super.setPoint(point);
 	}
 	
 	/**
 	 * prevents color from being changed after instantiation. 
 	 */
 	@Override
-	public void setcolor(int r, int g, int b) {
+	public void setColor(int r, int g, int b) {
 		if (super.getcolor() == 0)
-			super.setcolor(r, g, b);
+			super.setColor(r, g, b);
+	}
+	
+	
+	@Override
+	public void draw(Graphics g, Point p1) {
+		g.setColor(this.getcolor());
+		int xLoc = (int) (this.getPoint().getX() + p1.getX() - (getSize()/2));
+		int yLoc = (int) (this.getPoint().getY() + p1.getY() - (getSize()/2));
+		g.drawArc(xLoc, yLoc, this.getSize(), this.getSize(), 0, 360);
+		g.fillArc(xLoc, yLoc, this.getSize(), this.getSize(), 0, 360);
+		g.setColor(ColorUtil.BLACK);
+		g.drawString(this.getClass().getSimpleName(), xLoc, yLoc);
 	}
 
 
@@ -95,8 +109,8 @@ public class EnergyStation extends Fixed {
 			return test.capacity == this.capacity
 					&& test.MAXCAPACITY == this.MAXCAPACITY
 					&& test.getcolor() == this.getcolor()
-					&& test.getpoint() == this.getpoint() 
-					&& test.getsize() == this.getsize();
+					&& test.getPoint() == this.getPoint() 
+					&& test.getSize() == this.getSize();
 	}
 
 	/**
@@ -108,9 +122,27 @@ public class EnergyStation extends Fixed {
 		hash = 31 * hash + this.capacity;
 		hash = 31 * hash + this.MAXCAPACITY;
 		hash = 31 * hash + this.getcolor();
-		hash = 31 * hash + this.getsize();
-		hash = 31 * hash + Float.floatToIntBits(this.getpoint().getX());
-		hash = 31 * hash + Float.floatToIntBits(this.getpoint().getY());
+		hash = 31 * hash + this.getSize();
+		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getX());
+		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getY());
 		return hash;
+	}
+
+	@Override
+	public void setSelected(boolean isSelected) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isSelected() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean contains(Point p1, Point p2) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

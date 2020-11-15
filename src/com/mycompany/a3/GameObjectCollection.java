@@ -43,6 +43,7 @@ public class GameObjectCollection implements ICollection {
 		/**
 		 * used by iterator pattern 
 		 */
+		@Override
 		public boolean hasNext() {
 		if (gameObjectCollection.size ( ) <= 0) 
 				return false;
@@ -54,6 +55,7 @@ public class GameObjectCollection implements ICollection {
 		/**
 		 * 
 		 */
+		@Override
 		public Object getNext() {
 			index++;
 			return (gameObjectCollection.get(index));

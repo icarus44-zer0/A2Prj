@@ -7,7 +7,7 @@ import com.codename1.charts.models.Point;
 * @version 1.0
 * @since   202-09-28 
 */
-public abstract class Fixed extends GameObject{
+public abstract class Fixed extends GameObject implements ISelectable{
 		
 		/**
 		 * 
@@ -20,7 +20,7 @@ public abstract class Fixed extends GameObject{
 		}
 		
 		@Override
-		public void setpoint(Point point) {}
+		public void setPoint(Point point) {}
 		
 		
 		/**

@@ -5,7 +5,6 @@ import java.util.Random;
 import com.codename1.charts.models.Point;
 import com.codename1.charts.util.ColorUtil;
 import com.codename1.ui.Display;
-import com.mycompany.gui.MapViewContainer;
 
 /**
  * Represents a GameWorld.
@@ -45,8 +44,8 @@ public class GameWorld extends Observable {
 		soundFlag = false;
 		strategyflag = false;
 		baseSequenceNumber = 1;
-		baseCount = 4;
-		npcCyborgCount = 3;
+		baseCount = 9;
+		npcCyborgCount = 4;
 		droneCount = 4;
 		eStationCount = 4;
 		playerCount = 1;
@@ -75,7 +74,7 @@ public class GameWorld extends Observable {
 		for (int i = 0; i < baseCount; i++) {
 			Base base = initBase();
 			if (i == 0)
-				intiBasePoint = new Point(base.getpoint().getX(), base.getpoint().getY());
+				intiBasePoint = new Point(base.getPoint().getX(), base.getPoint().getY());
 			;
 			gameObjectCollection.add(base);
 		}
@@ -125,9 +124,9 @@ public class GameWorld extends Observable {
 		int r = 26, g = 188, b = 212; // Sea Blue
 
 		int energyLevel = 100;
-		int energyConsumptionRate = 10;
+		int energyConsumptionRate = 0;
 		int damageLevel = 0;
-		int maxDamageLevel = 100;
+		int maxDamageLevel = 1000000;
 		int lastBaseReached = 1;
 		int maxBaseReached = 1;
 		int steeringDirection = 0;
@@ -183,7 +182,7 @@ public class GameWorld extends Observable {
 	private Drone initDrone() {
 		Random random = new Random();
 		Point point = setInitialPoint();
-		int r = 219, g = 22, b = 224; // HOT PINK
+		int r = 219, g = 22, b = 224; // Hot Pink
 		int damageLevel = 0;
 		int size = 50;
 		int heading = random.nextInt(359) + 1;
@@ -221,8 +220,8 @@ public class GameWorld extends Observable {
 	private Point setInitialPoint() {
 		Random random = new Random();
 		float min = 0f;
-		float maxH = gameHeight;
-		float maxW = gameWidth;
+		float maxH = gameHeight-500;
+		float maxW = gameWidth-500;
 		float x = min + random.nextFloat() * (maxH - min);
 		float y = min + random.nextFloat() * (maxW - min);
 		return new Point(x, y);
@@ -323,10 +322,8 @@ public class GameWorld extends Observable {
 				NPCCyborg npcCyborg = (NPCCyborg)gameObject;
 				if(npcCyborg.getStrategy() instanceof NPCNextBaseStratagy){
 					npcCyborg.setStrategy(new NPCAttackStratagy(npcCyborg));
-					npcCyborg.setmaxBaseReached(npcCyborg.getmaxBaseReached()+1);
 				}else {
 					npcCyborg.setStrategy(new NPCNextBaseStratagy(npcCyborg));
-					npcCyborg.setmaxBaseReached(npcCyborg.getmaxBaseReached()+1);
 				}
 			}
 		}
@@ -400,15 +397,15 @@ public class GameWorld extends Observable {
 			}
 		}
 		
-		int damageTaken = 10 + 10 * refNPCyborg.getsize() / 100 + 10 * playerCyborg.getspeed() / 100;
+		int damageTaken = 10 + 10 * refNPCyborg.getSize() / 100 + 10 * playerCyborg.getspeed() / 100;
 		int currentDamage = playerCyborg.getdamageLevel();
-		int npcDamageTaken = 10 + 10 * refNPCyborg.getsize() / 100 + 10 * refNPCyborg.getspeed() / 100;
+		int npcDamageTaken = 10 + 10 * refNPCyborg.getSize() / 100 + 10 * refNPCyborg.getspeed() / 100;
 		int npcCurrrentDamg = refNPCyborg.getdamageLevel();
 
 		playerCyborg.setdamageLevel(currentDamage + damageTaken);
 		playerCyborg.setspeed(playerCyborg.getspeed());
 		playerCyborg.fadeColor();
-		playerCyborg.setpoint(refNPCyborg.getpoint());
+		playerCyborg.setPoint(refNPCyborg.getPoint());
 
 		refNPCyborg.setdamageLevel(npcCurrrentDamg + npcDamageTaken);
 		refNPCyborg.setspeed(refNPCyborg.getspeed()); // TODO create update speed method
@@ -435,16 +432,16 @@ public class GameWorld extends Observable {
 			GameObject gameObject = (GameObject) iterator.getNext();
 			if (gameObject instanceof Base) {
 				refBase = (Base) gameObject;
-				if (refBase.getsequenceNumber() == sequenceNumber)
+				if (refBase.getSequenceNumber() == sequenceNumber)
 					break;
 			} else
 				System.out.println("No Base at that location ");
 		}
 
-		if ((refBase.getsequenceNumber() - 1) == playerCyborg.getlastBaseReached()) {
-			playerCyborg.setlastBaseReached(refBase.getsequenceNumber());
+		if ((refBase.getSequenceNumber() - 1) == playerCyborg.getlastBaseReached()) {
+			playerCyborg.setlastBaseReached(refBase.getSequenceNumber());
 		}
-		playerCyborg.setpoint(refBase.getpoint());
+		playerCyborg.setPoint(refBase.getPoint());
 
 		System.out.println("Player Cyborg has collided with Base");
 		System.out.println("Player Cyborg" + ": " + playerCyborg);
@@ -470,7 +467,7 @@ public class GameWorld extends Observable {
 			}
 		}
 
-		playerCyborg.setpoint(refStation.getpoint());
+		playerCyborg.setPoint(refStation.getPoint());
 		int eCpacity = refStation.getcapacity();
 		refStation.setcapacity(0);
 
@@ -504,10 +501,10 @@ public class GameWorld extends Observable {
 			}
 		}
 
-		playerCyborg.setpoint(refDrone.getpoint());
+		playerCyborg.setPoint(refDrone.getPoint());
 		playerCyborg.fadeColor();
 
-		int damage = 5 + 10 * refDrone.getsize() / 100 + 10 * playerCyborg.getspeed() / 100;
+		int damage = 5 + 10 * refDrone.getSize() / 100 + 10 * playerCyborg.getspeed() / 100;
 		int curDamg = playerCyborg.getdamageLevel();
 		playerCyborg.setdamageLevel(curDamg + damage);
 		checkCyborgState();
@@ -572,7 +569,7 @@ public class GameWorld extends Observable {
 			if (lives >= 0) {
 				int r = 170, g = 169, b = 173; // initial color
 				playerCyborg.setdamageLevel(0);
-				playerCyborg.setcolor(r, g, b);
+				playerCyborg.setColor(r, g, b);
 				playerCyborg.setenergyLevel(100);
 			}
 		}
@@ -582,7 +579,7 @@ public class GameWorld extends Observable {
 			if (lives >= 0) {
 				int r = 170, g = 169, b = 173; // initial color
 				playerCyborg.setdamageLevel(0);
-				playerCyborg.setcolor(r, g, b);
+				playerCyborg.setColor(r, g, b);
 				playerCyborg.setenergyLevel(100);
 			}
 		}
@@ -622,7 +619,7 @@ public class GameWorld extends Observable {
 			if (lives >= 0) {
 				int r = 170, g = 169, b = 173; // initial color
 				playerCyborg.setdamageLevel(0);
-				playerCyborg.setcolor(r, g, b);
+				playerCyborg.setColor(r, g, b);
 				playerCyborg.setenergyLevel(100);
 			}
 		}
@@ -678,9 +675,9 @@ public class GameWorld extends Observable {
 	 */
 	@Deprecated
 	public void displayGameStatus() {
-		double xVal = playerCyborg.getpoint().getX();
+		double xVal = playerCyborg.getPoint().getX();
 		double rxVal = Math.round(xVal * 10.0) / 10.0;
-		double yVal = playerCyborg.getpoint().getY();
+		double yVal = playerCyborg.getPoint().getY();
 		double ryVal = Math.round(yVal * 10.0) / 10.0;
 		String Locaction = "Location= " + "(" + rxVal + "," + ryVal + "), ";
 

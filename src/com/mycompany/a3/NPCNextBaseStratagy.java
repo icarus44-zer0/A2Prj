@@ -61,12 +61,12 @@ public class NPCNextBaseStratagy implements IStrategy {
 	 * @return
 	 */
 	private boolean isCollision(NPCCyborg npcCyborg, Base nextBase) {
-		float b_xMax = nextBase.getpoint().getX() + nextBase.getsize()/2;
-		float b_xMin = nextBase.getpoint().getX() - nextBase.getsize()/2;
-		float b_yMax = nextBase.getpoint().getY() + nextBase.getsize()/2;
-		float b_yMin = nextBase.getpoint().getY() - nextBase.getsize()/2;
-		float c_xLoc = npcCyborg.getpoint().getX();
-		float c_yLoc = npcCyborg.getpoint().getY();
+		float b_xMax = nextBase.getPoint().getX() + nextBase.getSize()/2;
+		float b_xMin = nextBase.getPoint().getX() - nextBase.getSize()/2;
+		float b_yMax = nextBase.getPoint().getY() + nextBase.getSize()/2;
+		float b_yMin = nextBase.getPoint().getY() - nextBase.getSize()/2;
+		float c_xLoc = npcCyborg.getPoint().getX();
+		float c_yLoc = npcCyborg.getPoint().getY();
 		
 		return (c_xLoc <= b_xMax && c_xLoc >= b_xMin && c_yLoc <= b_yMax && c_yLoc >= b_yMin);
 	}
@@ -75,8 +75,8 @@ public class NPCNextBaseStratagy implements IStrategy {
 	 * 
 	 */
 	private void setLocations() {
-		npcLocation = npcCyborg.getpoint();
-		baseLocation = nextBase.getpoint();
+		npcLocation = npcCyborg.getPoint();
+		baseLocation = nextBase.getPoint();
 	}
 
 	/**
@@ -87,7 +87,7 @@ public class NPCNextBaseStratagy implements IStrategy {
 		while (iterator.hasNext()) {
 			GameObject gameObject = (GameObject) iterator.getNext();
 			if(gameObject instanceof Base) {
-				if (((Base) gameObject).getsequenceNumber() == npcCyborg.getmaxBaseReached() +1 ) {
+				if (((Base) gameObject).getSequenceNumber() == npcCyborg.getmaxBaseReached() +1 ) {
 					nextBase = (Base)gameObject;
 				}
 			}	

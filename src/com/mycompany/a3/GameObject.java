@@ -8,7 +8,7 @@ import com.codename1.charts.models.Point;
 * @since   202-09-28 
 */
 
-public abstract class GameObject {
+public abstract class GameObject implements IDrawable{
 	private int size;
 	private Point point;
 	private int color;
@@ -27,7 +27,7 @@ public abstract class GameObject {
 	 * Getter for the gameobject size.
 	 * @return the size of the gameobject.
 	 */
-	public int getsize() {
+	public int getSize() {
 		return size;
 	}
 
@@ -35,7 +35,7 @@ public abstract class GameObject {
 	 *Setter for the size of a gameobject. 
 	 * @param the new size of a gameobject.
 	 */
-	public void setsize(int size) {
+	public void setSize(int size) {
 			this.size = size;
 	}
 
@@ -43,7 +43,7 @@ public abstract class GameObject {
 	 * Getter for the location of a gameobject. 
 	 * @return the location of a gameobject.
 	 */
-	public Point getpoint() {
+	public Point getPoint() {
 		return point;
 	}
 
@@ -51,7 +51,7 @@ public abstract class GameObject {
 	 * Setter for the location of a gameobject.  
 	 * @param the new location of a gameobject.
 	 */
-	public void setpoint(Point point) {
+	public void setPoint(Point point) {
 		this.point = point;
 	}
 	
@@ -83,7 +83,7 @@ public abstract class GameObject {
 	 * Setter for the color of the gameobject.  
 	 * @param the new color of the gameobject.
 	 */
-	public void setcolor(int r, int g, int b) {
+	public void setColor(int r, int g, int b) {
 		this.color = ColorUtil.rgb(r, g, b);
 	}
 	
@@ -103,9 +103,9 @@ public abstract class GameObject {
 	@Override
 	public String toString() {	
 		
-		double xVal = this.getpoint().getX();
+		double xVal = this.getPoint().getX();
 		double rxVal = Math.round(xVal*10.0)/10.0;
-		double yVal = this.getpoint().getY();
+		double yVal = this.getPoint().getY();
 		double ryVal = Math.round(yVal*10.0)/10.0;
 		
 		String myDesc =
@@ -114,9 +114,11 @@ public abstract class GameObject {
 		+ ColorUtil.red(this.getcolor()) + ","
 		+ ColorUtil.green(this.getcolor()) + ","
 		+ ColorUtil.blue(this.getcolor()) + "], "
-		+ "Size= " + this.getsize() + ", ";
+		+ "Size= " + this.getSize() + ", ";
 		return myDesc ;
 	}
+
+
 	
 //	
 //	/**

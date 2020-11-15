@@ -5,7 +5,8 @@ package com.mycompany.a3;
 * @since   202-09-28 
 */
 import com.codename1.charts.models.Point;
-import java.util.Random;
+import com.codename1.charts.util.ColorUtil;
+import com.codename1.ui.Graphics;
 
 
 public class Base extends Fixed{
@@ -27,7 +28,7 @@ public class Base extends Fixed{
 	 * Getter for the sequenceNumber of a Fixed Base Gameobject.
 	 * @return the sequenceNumber of a Fixed Base Gameobject.
 	 */
-	public int getsequenceNumber() {
+	public int getSequenceNumber() {
 		return sequenceNumber;
 	}
 
@@ -35,7 +36,7 @@ public class Base extends Fixed{
 	 *Setter for the sequenceNumber of a Fixed Base Gameobject. 
 	 * @param the new the sequenceNumber of a Fixed Base Gameobject.
 	 */
-	public void setsequenceNumber(int sequenceNumber) {
+	public void setSequenceNumber(int sequenceNumber) {
 		if (this.sequenceNumber == 0 )
 			this.sequenceNumber = sequenceNumber;
 	}
@@ -44,9 +45,9 @@ public class Base extends Fixed{
 	 * prevents size from being changed after instantiation. 
 	 */
 	@Override
-	public void setsize(int size) {
-		if ( super.getsize() == 0) {
-			super.setsize(size);
+	public void setSize(int size) {
+		if ( super.getSize() == 0) {
+			super.setSize(size);
 		}
 	}
 
@@ -54,18 +55,18 @@ public class Base extends Fixed{
 	 * prevents location from being changed after instantiation. 
 	 */
 	@Override
-	public void setpoint(Point point) {
-		if (super.getpoint() == null )
-			super.setpoint(point);
+	public void setPoint(Point point) {
+		if (super.getPoint() == null )
+			super.setPoint(point);
 	}
 	
 	/**
 	 * prevents color from being changed after instantiation. 
 	 */
 	@Override
-	public void setcolor(int r, int g, int b) {
+	public void setColor(int r, int g, int b) {
 		if (super.getcolor() == 0)
-			super.setcolor(r, g, b);
+			super.setColor(r, g, b);
 	}
 
 	/**
@@ -90,8 +91,8 @@ public class Base extends Fixed{
 		  	Base test = (Base) obj;
 			return test.sequenceNumber == this.sequenceNumber 
 					&& test.getcolor() == this.getcolor()
-					&& test.getpoint() == this.getpoint() 
-					&& test.getsize() == this.getsize();
+					&& test.getPoint() == this.getPoint() 
+					&& test.getSize() == this.getSize();
 	}
 
 	/**
@@ -102,10 +103,41 @@ public class Base extends Fixed{
 		int hash = 13;
 		hash = 31 * hash + this.sequenceNumber;
 		hash = 31 * hash + this.getcolor();
-		hash = 31 * hash + this.getsize();
-		hash = 31 * hash + Float.floatToIntBits(this.getpoint().getX());
-		hash = 31 * hash + Float.floatToIntBits(this.getpoint().getY());
+		hash = 31 * hash + this.getSize();
+		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getX());
+		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getY());
 		return hash;
+	}
+
+	@Override
+	public void draw(Graphics g, Point p1) {
+		g.setColor(this.getcolor());
+		int xLoc = (int) (this.getPoint().getX() + p1.getX() - (getSize()/2));
+		int yLoc = (int) (this.getPoint().getY() + p1.getY() - (getSize()/2));
+		g.drawArc(xLoc, yLoc, this.getSize(), this.getSize(), 0, 360);
+		g.fillArc(xLoc, yLoc, this.getSize(), this.getSize(), 0, 360);
+		
+		g.setColor(ColorUtil.BLACK);
+		g.drawString(this.getClass().getSimpleName() + sequenceNumber, xLoc, yLoc);
+		
+	}
+
+	@Override
+	public void setSelected(boolean isSelected) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isSelected() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean contains(Point p1, Point p2) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 	
 }

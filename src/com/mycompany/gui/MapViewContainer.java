@@ -6,27 +6,18 @@ package com.mycompany.gui;
 import java.util.Observable;
 import java.util.Observer;
 
+import com.codename1.charts.models.Point;
 import com.codename1.charts.util.ColorUtil;
-import com.codename1.components.ClearableTextField;
-import com.codename1.ui.Component;
 import com.codename1.ui.Container;
 import com.codename1.ui.Graphics;
-import com.codename1.ui.Label;
 import com.codename1.ui.TextArea;
-import com.codename1.ui.TextField;
-import com.codename1.ui.layouts.BorderLayout;
-import com.codename1.ui.layouts.FlowLayout;
 import com.codename1.ui.layouts.Layout;
 import com.codename1.ui.plaf.Border;
-import com.mycompany.a3.Base;
-import com.mycompany.a3.Drone;
-import com.mycompany.a3.EnergyStation;
 import com.mycompany.a3.GameObject;
 import com.mycompany.a3.GameObjectCollection;
 import com.mycompany.a3.GameWorld;
+import com.mycompany.a3.IDrawable;
 import com.mycompany.a3.IIterator;
-import com.mycompany.a3.NPCCyborg;
-import com.mycompany.a3.PlayerCyborg;
 
 /**
  * @author Icarus44
@@ -34,6 +25,7 @@ import com.mycompany.a3.PlayerCyborg;
  */
 public class MapViewContainer extends Container implements Observer {
 	private TextArea gameTextArea;
+	private Graphics graphics;
 
 	/**
 	 * @param flowLayout
@@ -71,6 +63,7 @@ public class MapViewContainer extends Container implements Observer {
 	public MapViewContainer(Observable model) {
 		model.addObserver(this);
 	}
+	
 
 	/**
 	 * 
@@ -78,16 +71,40 @@ public class MapViewContainer extends Container implements Observer {
 	@Override
 	public void update(Observable observable, Object data) {
 		this.repaint();	
+		revalidate();
+	}
+	
+	
+	
+	@Override
+	public void paint(Graphics graphics)
+	{
+		super.paint(graphics);
+		
+		Point pCmpRelPrnt = new Point(this.getX(), this.getY());
 		GameWorld gameWorld = GameWorld.getInstance();
 		GameObjectCollection gameObjectCollection = gameWorld.getGameObjectCollection(); 
 		IIterator iterator = gameObjectCollection.getIterator();
-		String builderString = new String();
-		while (iterator.hasNext()) {
+		
+		while (iterator.hasNext())
+		{
 			GameObject gameObject = (GameObject) iterator.getNext();
-			builderString += gameObject.getClass().getSimpleName() + ": " + gameObject.toString() + "\n";
-			System.out.println(gameObject.getClass().getSimpleName() + ": " + gameObject.toString());
+			if (gameObject instanceof IDrawable)
+			{
+				((IDrawable) gameObject).draw(graphics, pCmpRelPrnt);
+			}
 		}
-		gameTextArea.setText(builderString);
-		revalidate();
 	}
+
+	public int getMapWidth() {
+		// TODO Auto-generated method stub
+		return this.getWidth();
+	}
+
+	public int getMapHeight() {
+		return this.getHeight();
+	}
+	
+	
+	
 }

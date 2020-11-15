@@ -6,7 +6,6 @@ package com.mycompany.a3;
 */
 
 
-import com.codename1.charts.util.ColorUtil;
 import com.codename1.ui.Component;
 import com.codename1.ui.Container;
 import com.codename1.ui.Form;
@@ -15,14 +14,14 @@ import com.codename1.ui.Toolbar;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
 import com.codename1.ui.layouts.FlowLayout;
+import com.codename1.ui.util.UITimer;
 import com.mycompany.command.*;
 import com.mycompany.gui.MapViewContainer;
 import com.mycompany.gui.ScoreViewContainer;
 import com.mycompany.gui.SideMenuItemForm;
 
 
-
-public class Game extends Form {
+public class Game extends Form implements Runnable{
 	private MapViewContainer mapViewContainer;
 	private ScoreViewContainer scoreViewContainer;
 	private Container bottomContainer;
@@ -49,6 +48,7 @@ public class Game extends Form {
 	private GameButton baseCollisionButton;
 	private GameButton tickGameClockButton;
 	private Toolbar gameToolbar;
+	private UITimer timer;
 	
 	
 	/*
@@ -69,13 +69,14 @@ public class Game extends Form {
 		initCollisioneStat();
 		initCollisionDrone();
 		initGameClock();
-		exitGame();
 		this.show();
 		
 		GameWorld gameWorld = GameWorld.getInstance();
-		gameWorld.init(mapViewContainer.getWidth(),mapViewContainer.getHeight());
+		gameWorld.init(mapViewContainer.getMapWidth(),mapViewContainer.getMapHeight());
 		gameWorld.addObserver(mapViewContainer); 
 		gameWorld.addObserver(scoreViewContainer); 
+		timer = new UITimer(this);
+		timer.schedule(20, true, this);
 	}
 	
 	/**
@@ -229,12 +230,6 @@ public class Game extends Form {
 				
 	}
 
-	/**
-	 * 
-	 */
-	private void exitGame() {
-		
-	}
 	
 	/**
 	 * 
@@ -246,5 +241,12 @@ public class Game extends Form {
 		this.add(BorderLayout.WEST,leftContainer);
 		this.add(BorderLayout.EAST,rightContainer);
 		
+	}
+
+	@Override
+	public void run() {
+		GameWorld gameWorld = GameWorld.getInstance();
+		gameWorld.tickGameClock();
+		mapViewContainer.repaint();
 	}
 }

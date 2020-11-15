@@ -5,6 +5,9 @@ package com.mycompany.a3;
 * @since   202-09-28 
 */
 import com.codename1.charts.models.Point;
+import com.codename1.charts.util.ColorUtil;
+import com.codename1.ui.Graphics;
+
 import java.util.Random;
 
 public class Drone extends Movable {
@@ -74,11 +77,23 @@ public class Drone extends Movable {
 	 * prevemts Movable Drone Gameobject from changing their color.
 	 */
 	@Override
-	public void setcolor(int r, int g, int b) {
+	public void setColor(int r, int g, int b) {
 		if ( super.getcolor() == 0 )
-			super.setcolor(r, g, b);
+			super.setColor(r, g, b);
 	}
-
+	
+	
+	@Override
+	public void draw(Graphics g, Point p1) {
+		g.setColor(this.getcolor());
+		int xLoc = (int) (this.getPoint().getX() + p1.getX() - (getSize()/2));
+		int yLoc = (int) (this.getPoint().getY() + p1.getY() - (getSize()/2));
+		g.drawArc(xLoc, yLoc, this.getSize(), this.getSize(), 0, 360);
+		g.fillArc(xLoc, yLoc, this.getSize(), this.getSize(), 0, 360);
+		g.setColor(ColorUtil.BLACK);
+		g.drawString(this.getClass().getSimpleName(), xLoc, yLoc);
+	}
+		
 	/**
 	 * overides toString for Movable Drone Gameobject.
 	 */
@@ -101,8 +116,8 @@ public class Drone extends Movable {
 		  	Drone test = (Drone) obj;
 			return test.damageLevel == this.damageLevel 
 					&& test.getcolor() == this.getcolor()
-					&& test.getpoint() == this.getpoint() 
-					&& test.getsize() == this.getsize()
+					&& test.getPoint() == this.getPoint() 
+					&& test.getSize() == this.getSize()
 					&& test.getspeed() == this.getspeed() 
 					&& test.getheading() == this.getheading(); 
 	}
@@ -115,11 +130,11 @@ public class Drone extends Movable {
 		int hash = 23;
 		hash = 31 * hash + this.damageLevel;
 		hash = 31 * hash + this.getcolor();
-		hash = 31 * hash + this.getsize();
+		hash = 31 * hash + this.getSize();
 		hash = 31 * hash + this.getspeed();
 		hash = 31 * hash + this.getheading();
-		hash = 31 * hash + Float.floatToIntBits(this.getpoint().getX());
-		hash = 31 * hash + Float.floatToIntBits(this.getpoint().getY());
+		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getX());
+		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getY());
 		return hash;
 	}
 		

@@ -32,8 +32,8 @@ public abstract class Movable extends GameObject {
 		int velocity = speed; //TODO add time when time is varable 
 		int angle = this.heading;
 	
-		float x = super.getpoint().getX();
-		float y = super.getpoint().getY();
+		float x = super.getPoint().getX();
+		float y = super.getPoint().getY();
 		
 		double deltaX =  Math.cos(Math.toRadians(angle))*velocity; 
 		double deltaY =  Math.sin(Math.toRadians(angle))*velocity;
