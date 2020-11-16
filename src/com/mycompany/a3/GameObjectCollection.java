@@ -2,6 +2,8 @@ package com.mycompany.a3;
 
 import java.util.ArrayList;
 
+import com.mycompany.gameObjects.GameObject;
+
 public class GameObjectCollection implements ICollection {
 	private ArrayList<GameObject> gameObjectCollection;
 

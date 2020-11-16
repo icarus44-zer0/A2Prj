@@ -1,10 +1,19 @@
 package com.mycompany.a3;
 
+
 import java.util.Observable;
 import java.util.Random;
 import com.codename1.charts.models.Point;
 import com.codename1.charts.util.ColorUtil;
 import com.codename1.ui.Display;
+import com.mycompany.gameObjects.Base;
+import com.mycompany.gameObjects.Cyborg;
+import com.mycompany.gameObjects.Drone;
+import com.mycompany.gameObjects.EnergyStation;
+import com.mycompany.gameObjects.GameObject;
+import com.mycompany.gameObjects.Movable;
+import com.mycompany.gameObjects.NPCCyborg;
+import com.mycompany.gameObjects.PlayerCyborg;
 
 /**
  * Represents a GameWorld.
@@ -44,7 +53,7 @@ public class GameWorld extends Observable {
 		soundFlag = false;
 		strategyflag = false;
 		baseSequenceNumber = 1;
-		baseCount = 9;
+		baseCount = 4;
 		npcCyborgCount = 4;
 		droneCount = 4;
 		eStationCount = 4;
@@ -67,7 +76,7 @@ public class GameWorld extends Observable {
 	 * initialize game objects
 	 */
 	public void init(int gameWidth, int gameHeight) {
-		
+
 		this.gameWidth = gameWidth;
 		this.gameHeight = gameHeight;
 
@@ -113,7 +122,6 @@ public class GameWorld extends Observable {
 			npcCyborg.setStrategy(new NPCNextBaseStratagy(npcCyborg));
 		}
 	}
-	
 
 	/**
 	 * 
@@ -140,7 +148,6 @@ public class GameWorld extends Observable {
 				lastBaseReached, maxBaseReached, steeringDirection, heading, speed, size, point, color);
 	}
 
-	
 	/**
 	 * 
 	 * @return
@@ -211,19 +218,18 @@ public class GameWorld extends Observable {
 		Random random = new Random();
 		Point point = setInitialPoint();
 		int r = 180, g = 90, b = 11; // Burnt Orange
-		int size = random.nextInt(40 + 1) + 10;
+		int size = random.nextInt(100 + 1) + 10;
 		int color = ColorUtil.rgb(r, g, b);
-		int capacity = size * random.nextInt(3 + 1) + 1;
+		int capacity = size * 5;
 		return new EnergyStation(capacity, size, point, color);
 	}
 
 	private Point setInitialPoint() {
 		Random random = new Random();
-		float min = 0f;
-		float maxH = gameHeight-500;
-		float maxW = gameWidth-500;
-		float x = min + random.nextFloat() * (maxH - min);
-		float y = min + random.nextFloat() * (maxW - min);
+
+		float x = (float)random.nextInt((gameWidth - 100) -100) +100;
+		float y = (float)random.nextInt((gameHeight - 100) -100) +100;
+		
 		return new Point(x, y);
 	}
 
@@ -318,11 +324,11 @@ public class GameWorld extends Observable {
 		IIterator iterator = gameObjectCollection.getIterator();
 		while (iterator.hasNext()) {
 			GameObject gameObject = (GameObject) iterator.getNext();
-			if(gameObject instanceof NPCCyborg) {
-				NPCCyborg npcCyborg = (NPCCyborg)gameObject;
-				if(npcCyborg.getStrategy() instanceof NPCNextBaseStratagy){
+			if (gameObject instanceof NPCCyborg) {
+				NPCCyborg npcCyborg = (NPCCyborg) gameObject;
+				if (npcCyborg.getStrategy() instanceof NPCNextBaseStratagy) {
 					npcCyborg.setStrategy(new NPCAttackStratagy(npcCyborg));
-				}else {
+				} else {
 					npcCyborg.setStrategy(new NPCNextBaseStratagy(npcCyborg));
 				}
 			}
@@ -331,8 +337,7 @@ public class GameWorld extends Observable {
 		setChanged();
 		notifyObservers();
 	}
-	
-	
+
 	/*
 	 * keyboard input "a" causes the player Cyborg to incriment speed by one.
 	 */
@@ -382,11 +387,10 @@ public class GameWorld extends Observable {
 	 */
 	public void pCyborgcyborgCollision(NPCCyborg npcCyborg) {
 		Cyborg refNPCyborg = null;
-		
+
 		if (npcCyborg != null) {
 			refNPCyborg = npcCyborg;
-		}
-		else {
+		} else {
 			IIterator iterator = gameObjectCollection.getIterator();
 			while (iterator.hasNext()) {
 				GameObject gameObject = (GameObject) iterator.getNext();
@@ -396,7 +400,7 @@ public class GameWorld extends Observable {
 				}
 			}
 		}
-		
+
 		int damageTaken = 10 + 10 * refNPCyborg.getSize() / 100 + 10 * playerCyborg.getspeed() / 100;
 		int currentDamage = playerCyborg.getdamageLevel();
 		int npcDamageTaken = 10 + 10 * refNPCyborg.getSize() / 100 + 10 * refNPCyborg.getspeed() / 100;
@@ -524,8 +528,6 @@ public class GameWorld extends Observable {
 	 */
 	public void tickGameClock() {
 		timeElapsed++;
-
-		System.out.println("Time Elapesed " + timeElapsed);
 		checkPlayerValues();
 		checkPlayerLives();
 		checkNPCValues();
@@ -563,7 +565,7 @@ public class GameWorld extends Observable {
 	/**
 	 * 
 	 */
-	private void checkPlayerValues(){
+	private void checkPlayerValues() {
 		if (playerCyborg.getdamageLevel() >= playerCyborg.getMAXDAMAGELEVEL()) {
 			lives--;
 			if (lives >= 0) {
@@ -594,13 +596,13 @@ public class GameWorld extends Observable {
 			GameObject gameObject = (GameObject) theElements.getNext();
 			if (gameObject instanceof NPCCyborg) {
 				NPCCyborg npc = (NPCCyborg) gameObject;
-				if(npc.getmaxBaseReached() == baseCount) {
+				if (npc.getmaxBaseReached() == baseCount) {
 					System.out.println("NPC HAS REACHED FINAL BASE");
 					System.out.println("GAMEOVER");
 					Display.getInstance().exitApplication();
 					return;
 				}
-					
+
 			}
 		}
 	}
@@ -691,4 +693,76 @@ public class GameWorld extends Observable {
 		System.out.println("Location: " + Locaction);
 		System.out.println();
 	}
+
+	public void debug() {
+		//objectsInBounds_Width();
+		//objectsInBounds_Heigth();
+		//playerLocation();
+		//npcNeverWin();
+
+	}
+
+	private void npcNeverWin() {
+		IIterator itr = gameObjectCollection.getIterator();
+		while (itr.hasNext()) {
+			GameObject gameObject = (GameObject) itr.getNext();
+
+			if (gameObject instanceof NPCCyborg) {
+				NPCCyborg npc = (NPCCyborg) gameObject;
+				if (npc.getmaxBaseReached() == baseCount - 1) {
+					npc.setmaxBaseReached(1);
+					return;
+				}
+			}
+
+		}
+	}
+
+	private void playerLocation() {
+		IIterator itr = gameObjectCollection.getIterator();
+		while (itr.hasNext()) {
+			GameObject gameObject = (GameObject) itr.getNext();
+			if (gameObject instanceof PlayerCyborg) {
+				PlayerCyborg playerCyborg = (PlayerCyborg) gameObject;
+
+				double xVal = playerCyborg.getPoint().getX();
+				double rxVal = Math.round(xVal * 10.0) / 10.0;
+				double yVal = playerCyborg.getPoint().getY();
+				double ryVal = Math.round(yVal * 10.0) / 10.0;
+
+				String loc = "P1 Location= " + "(" + rxVal + "," + ryVal + "), ";
+				System.out.println(loc);
+			}
+		}
+	}
+
+	private void objectsInBounds_Width() {
+		GameWorld gameWorld = GameWorld.getInstance();
+		GameObjectCollection gameObjectCollection = gameWorld.getGameObjectCollection();
+		IIterator it = gameObjectCollection.getIterator();
+		while (it.hasNext()) {
+			GameObject gameObject = (GameObject) it.getNext();
+			float x = gameObject.getPoint().getX();
+
+			if (x <= 0 && x > (float) gameWorld.getGameWidth()) {
+				System.out.println("X: " + x + " GW" + (float) gameWorld.getGameWidth());
+			}
+		}
+
+	}
+
+	private void objectsInBounds_Heigth() {
+		GameWorld gameWorld = GameWorld.getInstance();
+		GameObjectCollection gameObjectCollection = gameWorld.getGameObjectCollection();
+		IIterator it = gameObjectCollection.getIterator();
+		while (it.hasNext()) {
+			GameObject gameObject = (GameObject) it.getNext();
+			float y = gameObject.getPoint().getY();
+			if (y <= 0 && y > (float) gameWorld.getGameWidth()) {
+				System.out.println("Y: " + y + " GW" + (float) gameWorld.getGameHeight());
+			}
+
+		}
+	}
+
 }

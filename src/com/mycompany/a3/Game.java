@@ -49,6 +49,16 @@ public class Game extends Form implements Runnable{
 	private GameButton tickGameClockButton;
 	private Toolbar gameToolbar;
 	private UITimer timer;
+	private int mapViewContainer_Height;
+	private int mapViewContainer_Width;
+	private int scoreViewContainer_Height;
+	private int scoreViewContainer_Width;
+	private int leftContainer_Height;
+	private int leftContainer_Width;
+	private int rightContainer_Height;
+	private int rightContainer_Width;
+	private int bottomContainer_Height;
+	private int bottomContainer_Width;
 	
 	
 	/*
@@ -71,14 +81,39 @@ public class Game extends Form implements Runnable{
 		initGameClock();
 		this.show();
 		
-		GameWorld gameWorld = GameWorld.getInstance();
-		gameWorld.init(mapViewContainer.getMapWidth(),mapViewContainer.getMapHeight());
-		gameWorld.addObserver(mapViewContainer); 
-		gameWorld.addObserver(scoreViewContainer); 
+		calcuateGameMapLocation();
+		setupGameWorld();
+		SetupTimer();
+	}
+	
+	private void SetupTimer() {
 		timer = new UITimer(this);
 		timer.schedule(20, true, this);
 	}
-	
+
+	private void setupGameWorld() {
+		GameWorld gameWorld = GameWorld.getInstance();
+		gameWorld.init(mapViewContainer_Width, mapViewContainer_Height);;
+		gameWorld.addObserver(mapViewContainer); 
+		gameWorld.addObserver(scoreViewContainer); 
+	}
+
+	private void calcuateGameMapLocation() {
+		mapViewContainer_Height = mapViewContainer.getMapHeight();
+		mapViewContainer_Width = mapViewContainer.getMapWidth();
+		
+		scoreViewContainer_Height = scoreViewContainer.getAbsoluteY();
+		scoreViewContainer_Width = scoreViewContainer.getAbsoluteX();
+		
+		leftContainer_Height = leftContainer.getHeight();
+		leftContainer_Width = leftContainer.getWidth();
+		
+		rightContainer_Height = rightContainer.getHeight();
+		rightContainer_Width = rightContainer.getWidth();
+		bottomContainer_Height = bottomContainer.getHeight();
+		bottomContainer_Width = bottomContainer.getWidth();
+	}
+
 	/**
 	 * 
 	 */

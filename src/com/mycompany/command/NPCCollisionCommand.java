@@ -6,7 +6,7 @@ package com.mycompany.command;
 import com.codename1.ui.Command;
 import com.codename1.ui.events.ActionEvent;
 import com.mycompany.a3.GameWorld;
-import com.mycompany.a3.NPCCyborg;
+import com.mycompany.gameObjects.NPCCyborg;
 
 /**
  * @author Icarus44

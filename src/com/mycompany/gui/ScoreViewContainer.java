@@ -10,7 +10,7 @@ import com.codename1.ui.Container;
 import com.codename1.ui.Label;
 import com.codename1.ui.layouts.Layout;
 import com.mycompany.a3.GameWorld;
-import com.mycompany.a3.PlayerCyborg;
+import com.mycompany.gameObjects.PlayerCyborg;
 
 /**
  * @author Icarus44

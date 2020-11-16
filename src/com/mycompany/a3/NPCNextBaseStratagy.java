@@ -2,6 +2,9 @@ package com.mycompany.a3;
 
 import com.codename1.charts.models.Point;
 import com.codename1.util.MathUtil;
+import com.mycompany.gameObjects.Base;
+import com.mycompany.gameObjects.GameObject;
+import com.mycompany.gameObjects.NPCCyborg;
 
 public class NPCNextBaseStratagy implements IStrategy {
 	private NPCCyborg npcCyborg;

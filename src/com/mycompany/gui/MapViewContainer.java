@@ -13,11 +13,12 @@ import com.codename1.ui.Graphics;
 import com.codename1.ui.TextArea;
 import com.codename1.ui.layouts.Layout;
 import com.codename1.ui.plaf.Border;
-import com.mycompany.a3.GameObject;
+import com.codename1.util.regex.REDebugCompiler;
 import com.mycompany.a3.GameObjectCollection;
 import com.mycompany.a3.GameWorld;
 import com.mycompany.a3.IDrawable;
 import com.mycompany.a3.IIterator;
+import com.mycompany.gameObjects.GameObject;
 
 /**
  * @author Icarus44
@@ -71,17 +72,29 @@ public class MapViewContainer extends Container implements Observer {
 	@Override
 	public void update(Observable observable, Object data) {
 		this.repaint();	
+		debugger();
 		revalidate();
 	}
 	
-	
+	/**
+	 * debug method for printing output to console and setting all NPC to never win 
+	 */
+	public void debugger() {
+		GameWorld gameWorld = GameWorld.getInstance();
+		gameWorld.debug();
+	}
 	
 	@Override
 	public void paint(Graphics graphics)
 	{
 		super.paint(graphics);
-		
+		int iPx = 0;
+		int iPy = 0;
+
+		//Point pCmpRelPrnt = new Point(iPx-getParent().getAbsoluteX(),iPy-getParent().getAbsoluteY());
 		Point pCmpRelPrnt = new Point(this.getX(), this.getY());
+		
+		
 		GameWorld gameWorld = GameWorld.getInstance();
 		GameObjectCollection gameObjectCollection = gameWorld.getGameObjectCollection(); 
 		IIterator iterator = gameObjectCollection.getIterator();

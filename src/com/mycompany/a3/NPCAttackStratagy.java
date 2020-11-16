@@ -2,6 +2,8 @@ package com.mycompany.a3;
 
 import com.codename1.charts.models.Point;
 import com.codename1.util.MathUtil;
+import com.mycompany.gameObjects.NPCCyborg;
+import com.mycompany.gameObjects.PlayerCyborg;
 
 public class NPCAttackStratagy implements IStrategy {
 	private NPCCyborg npcCyborg;
@@ -23,12 +25,12 @@ public class NPCAttackStratagy implements IStrategy {
 	@Override
 	public void apply() {
 		
-//		if (isCollision(npcCyborg, playerCyborg)) {
-//			GameWorld gameWorld = GameWorld.getInstance();
-//			
-//			gameWorld.pCyborgcyborgCollision(npcCyborg);
-//			
-//		}
+		if (isCollision(npcCyborg, playerCyborg)) {
+			GameWorld gameWorld = GameWorld.getInstance();
+			
+			gameWorld.pCyborgcyborgCollision(npcCyborg);
+			
+		}
 		
 		Point npcLocation = npcCyborg.getPoint();
 		float npcXcord = npcLocation.getX();
@@ -57,16 +59,16 @@ public class NPCAttackStratagy implements IStrategy {
 	 * @param playerCyborg
 	 * @return
 	 */
-//	private boolean isCollision(NPCCyborg npcCyborg, PlayerCyborg playerCyborg) {
-//		float b_xMax = playerCyborg.getPoint().getX() + playerCyborg.getSize()/2;
-//		float b_xMin = playerCyborg.getPoint().getX() - playerCyborg.getSize()/2;
-//		float b_yMax = playerCyborg.getPoint().getY() + playerCyborg.getSize()/2;
-//		float b_yMin = playerCyborg.getPoint().getY() - playerCyborg.getSize()/2;
-//		float c_xLoc = npcCyborg.getPoint().getX();
-//		float c_yLoc = npcCyborg.getPoint().getY();
-//		
-//		return (c_xLoc <= b_xMax && c_xLoc >= b_xMin && c_yLoc <= b_yMax && c_yLoc >= b_yMin);
-//	}
+	private boolean isCollision(NPCCyborg npcCyborg, PlayerCyborg playerCyborg) {
+		float b_xMax = playerCyborg.getPoint().getX() + playerCyborg.getSize()/2;
+		float b_xMin = playerCyborg.getPoint().getX() - playerCyborg.getSize()/2;
+		float b_yMax = playerCyborg.getPoint().getY() + playerCyborg.getSize()/2;
+		float b_yMin = playerCyborg.getPoint().getY() - playerCyborg.getSize()/2;
+		float c_xLoc = npcCyborg.getPoint().getX();
+		float c_yLoc = npcCyborg.getPoint().getY();
+		
+		return (c_xLoc <= b_xMax && c_xLoc >= b_xMin && c_yLoc <= b_yMax && c_yLoc >= b_yMin);
+	}
 
 
 }
