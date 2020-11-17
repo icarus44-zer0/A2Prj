@@ -91,7 +91,7 @@ public class NPCCyborg extends Cyborg {
 	 */
 	@Override
 	public void move() {
-		//invokeStrategy();
+		invokeStrategy();
 		int newEng = energyLevel - energyConsumptionRate;
 		if(newEng>=0 && !(damageLevel >= maxDamageLevel) && !(super.getspeed()==0)) {
 			energyLevel -= energyConsumptionRate;

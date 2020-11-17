@@ -21,7 +21,7 @@ public abstract class Movable extends GameObject {
 	public Movable(int heading, int speed, int size, Point point, int color) {
 		super(size, point, color);
 		this.heading = heading;
-		this.speed = 20 ;//speed;
+		this.speed = speed;
 	}
 	
 	/**
@@ -34,7 +34,7 @@ public abstract class Movable extends GameObject {
 		gameWorld = GameWorld.getInstance();
 		int size = this.getSize();
 		int velocity = speed; 
-		int time = 1;
+		double time = 1.0;
 		int angle = 90-this.heading;
 	
 		float x = super.getPoint().getX();
@@ -46,26 +46,28 @@ public abstract class Movable extends GameObject {
 		double nextX = x + deltaX;
 		double nextY = y + deltaY;
 			
-		
+		// left
 		if (nextX <= ((size/2) + 25)) {
-			 angle -= 90;
+			 angle = 180 - angle;
 			 deltaX =  Math.cos(Math.toRadians(angle))*velocity; 
 			 nextX = x + deltaX;
 			 setheading(angle);
 		}
-
+		// right
 		if (nextX >= gameWorld.getGameWidth()-((size/2) - 25)) {
-			 angle -= 90;
+			 angle = 180 - angle;
 			 deltaX =  Math.cos(Math.toRadians(angle))*velocity; 
 			 nextX = x + deltaX;
 			 setheading(angle);
 		}
+		// bottom
 		if (nextY <= ((size/2) + 25)) {
 			 angle = 180 - angle;
 			 deltaY =  Math.sin(Math.toRadians(angle))*velocity;
 			 nextY = y + deltaY;
 			 setheading(angle);
 		}
+		// top
 		if (nextY >= gameWorld.getGameHeight()-((size/2) - 25)) {
 			 angle = 180 - angle;
 			 deltaY =  Math.sin(Math.toRadians(angle))*velocity;

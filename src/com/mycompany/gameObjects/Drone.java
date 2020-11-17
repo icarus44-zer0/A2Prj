@@ -52,13 +52,11 @@ public class Drone extends Movable {
 	 */
 	@Override
 	public void move() {
-	
-//		Random random = new Random();
-//		
-//		int numbers[] = new int[] {-5,5};
-//		int delta = numbers[random.nextInt(2)];
-//		int ret = super.getheading();
-//		super.setheading(ret + delta);
+		Random random = new Random();
+		int numbers[] = new int[] {-5,5};
+		int delta = numbers[random.nextInt(2)];
+		int ret = super.getheading();
+		super.setheading(ret + delta);
 		super.move();
 	}
 

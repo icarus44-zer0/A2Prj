@@ -99,8 +99,12 @@ public class Game extends Form implements Runnable{
 	}
 
 	private void calcuateGameMapLocation() {
-		mapViewContainer_Height = mapViewContainer.getMapHeight();
-		mapViewContainer_Width = mapViewContainer.getMapWidth();
+		
+		mapViewContainer_Height = mapViewContainer.getHeight();
+		mapViewContainer_Width = mapViewContainer.getWidth();
+		
+		//mapViewContainer_Height = mapViewContainer.getMapHeight();
+		//mapViewContainer_Width = mapViewContainer.getMapWidth();
 		
 		scoreViewContainer_Height = scoreViewContainer.getAbsoluteY();
 		scoreViewContainer_Width = scoreViewContainer.getAbsoluteX();

@@ -1,9 +1,9 @@
-package com.mycompany.a3;
+package com.mycompany.gameObjects;
 
 import com.codename1.charts.models.Point;
 import com.codename1.util.MathUtil;
-import com.mycompany.gameObjects.NPCCyborg;
-import com.mycompany.gameObjects.PlayerCyborg;
+import com.mycompany.a3.GameWorld;
+import com.mycompany.a3.IStrategy;
 
 public class NPCAttackStratagy implements IStrategy {
 	private NPCCyborg npcCyborg;

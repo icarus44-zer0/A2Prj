@@ -12,7 +12,9 @@ import com.mycompany.gameObjects.Drone;
 import com.mycompany.gameObjects.EnergyStation;
 import com.mycompany.gameObjects.GameObject;
 import com.mycompany.gameObjects.Movable;
+import com.mycompany.gameObjects.NPCAttackStratagy;
 import com.mycompany.gameObjects.NPCCyborg;
+import com.mycompany.gameObjects.NPCNextBaseStratagy;
 import com.mycompany.gameObjects.PlayerCyborg;
 
 /**
@@ -695,10 +697,10 @@ public class GameWorld extends Observable {
 	}
 
 	public void debug() {
-		//objectsInBounds_Width();
-		//objectsInBounds_Heigth();
-		//playerLocation();
-		//npcNeverWin();
+		objectsInBounds_Width();
+		objectsInBounds_Heigth();
+		playerLocation();
+		npcNeverWin();
 
 	}
 
@@ -706,7 +708,6 @@ public class GameWorld extends Observable {
 		IIterator itr = gameObjectCollection.getIterator();
 		while (itr.hasNext()) {
 			GameObject gameObject = (GameObject) itr.getNext();
-
 			if (gameObject instanceof NPCCyborg) {
 				NPCCyborg npc = (NPCCyborg) gameObject;
 				if (npc.getmaxBaseReached() == baseCount - 1) {

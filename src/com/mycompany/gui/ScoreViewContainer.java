@@ -13,7 +13,6 @@ import com.mycompany.a3.GameWorld;
 import com.mycompany.gameObjects.PlayerCyborg;
 
 /**
- * @author Icarus44
  *
  */
 public class ScoreViewContainer extends Container implements Observer {
@@ -52,7 +51,7 @@ public class ScoreViewContainer extends Container implements Observer {
 	public void update(Observable observable, Object data) {
 		GameWorld gameWorld = GameWorld.getInstance();
 		playerCyborg = PlayerCyborg.getInstance();
-		timeValueLabel.setText("" + gameWorld.gettimeElapsed());
+		timeValueLabel.setText("" + "0");//gameWorld.gettimeElapsed());
 		livesValueLabel.setText("" + gameWorld.getlives());
 		baseValueLabel.setText("" + playerCyborg.getlastBaseReached());
 		energyValueLabel.setText("" + playerCyborg.getenergyLevel());
@@ -116,7 +115,7 @@ public class ScoreViewContainer extends Container implements Observer {
 
 
 	/**
-	 * configurs the style for all labels 
+	 * Configures the style for all labels 
 	 */
 	private void setPadding() {
 		 timeLabel.getAllStyles().setPadding(RIGHT,2);
