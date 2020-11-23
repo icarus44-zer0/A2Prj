@@ -63,4 +63,8 @@ public class GameObjectCollection implements ICollection {
 			return (gameObjectCollection.get(index));
 		}
 	}
+	
+	public boolean isEmpty() {
+		return(gameObjectCollection.isEmpty());
+	}
 }

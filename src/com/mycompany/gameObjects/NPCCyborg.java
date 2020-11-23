@@ -6,6 +6,7 @@ package com.mycompany.gameObjects;
 import com.codename1.charts.models.Point;
 import com.codename1.charts.util.ColorUtil;
 import com.codename1.ui.Graphics;
+import com.mycompany.a3.GameWorld;
 import com.mycompany.a3.IStrategy;
 
 /**
@@ -63,15 +64,15 @@ public class NPCCyborg extends Cyborg {
 	}
 	
 	@Override
-	public void draw(Graphics g, Point p1) {
+	public void draw(Graphics g, Point pCmpRelPrnt) {
+		int size = super.getSize();
 		g.setColor(this.getcolor());
-		int xLoc = (int) (this.getPoint().getX() + p1.getX() - (getSize()/2));
-		int yLoc = (int) (this.getPoint().getY() + p1.getY() - (getSize()/2));
-		g.drawArc(xLoc, yLoc, this.getSize(), this.getSize(), 0, 360);
-		g.fillArc(xLoc, yLoc, this.getSize(), this.getSize(), 0, 360);
-		g.setColor(ColorUtil.BLACK);
-		g.drawString("NPC", xLoc, yLoc);
+		int xLoc = (int) (pCmpRelPrnt.getX()+ this.getPoint().getX());
+		int yLoc = (int) (pCmpRelPrnt.getY()+ this.getPoint().getY());
+		g.drawRect(xLoc-size/2, yLoc-size/2, size, size);
+		super.draw(g, pCmpRelPrnt);
 	}
+
 	
 	/**
 	 * 
@@ -91,12 +92,50 @@ public class NPCCyborg extends Cyborg {
 	 */
 	@Override
 	public void move() {
-		invokeStrategy();
-		int newEng = energyLevel - energyConsumptionRate;
-		if(newEng>=0 && !(damageLevel >= maxDamageLevel) && !(super.getspeed()==0)) {
-			energyLevel -= energyConsumptionRate;
-			steer();
-			super.move();
+		//invokeStrategy();
+		super.move();
+	}
+
+//	/**
+//	 * 
+//	 * @param GameObject
+//	 * @return
+//	 */
+//	@Override
+//	public boolean collidesWith(GameObject otherObject) {
+//		float b_xMax = this.getPoint().getX() + this.getSize()/2 + 50;
+//		float b_xMin = this.getPoint().getX() - this.getSize()/2 + 50;
+//		float b_yMax = this.getPoint().getY() + this.getSize()/2 + 50;
+//		float b_yMin = this.getPoint().getY() - this.getSize()/2 + 50;
+//		float c_xLoc = otherObject.getPoint().getX();
+//		float c_yLoc = otherObject.getPoint().getY();
+//		return (c_xLoc <= b_xMax && c_xLoc >= b_xMin && c_yLoc <= b_yMax && c_yLoc >= b_yMin);
+//	}
+	
+
+	@Override
+	public void handleCollision(GameObject otherObject) {
+//		if (otherObject instanceof PlayerCyborg) {
+//			GameWorld.getInstance().pCyborgcyborgCollision(this);
+//			this.setheading(180 -this.getheading());
+//			PlayerCyborg.getInstance().setheading(180- PlayerCyborg.getInstance().getheading());
+//		}
+		if (otherObject instanceof NPCCyborg) {
+			NPCCyborg new_name = (NPCCyborg) otherObject;
+			this.setheading(180 -this.getheading());
+			new_name.setheading(180- new_name.getheading());
+		}
+	
+		else if (otherObject instanceof Drone) {
+			Drone new_name = (Drone) otherObject;
+			super.movableCollision();
+//			this.setheading(getheading()-this.getheading());
+//			new_name.setheading(180- new_name.getheading());
+		}
+		else if (otherObject instanceof Base) {
+//			Base new_name = (Base) otherObject;
+//			//if(!(new_name.isCollisionFlag()))
+//			GameWorld.getInstance().NPCCyborgBaseCollison(new_name,this);
 		}
 	}
 }

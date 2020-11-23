@@ -33,13 +33,6 @@ public class NPCNextBaseStratagy implements IStrategy {
 		setNextBase();
 		setLocations();
 		
-		if (isCollision(npcCyborg, nextBase)) {
-			npcCyborg.setmaxBaseReached(npcCyborg.getmaxBaseReached()+1);
-			
-			setNextBase();
-			setLocations();
-		}
-		
 		float npcXcord = npcLocation.getX();
 		float npcYcord = npcLocation.getY();
 		
@@ -57,6 +50,7 @@ public class NPCNextBaseStratagy implements IStrategy {
 		
 		npcCyborg.setheading(heading);
 	}
+	
 	
 	/**
 	 * 
@@ -82,6 +76,7 @@ public class NPCNextBaseStratagy implements IStrategy {
 		npcLocation = npcCyborg.getPoint();
 		baseLocation = nextBase.getPoint();
 	}
+	
 
 	/**
 	 * 

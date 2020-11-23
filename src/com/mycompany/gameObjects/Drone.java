@@ -1,4 +1,6 @@
 package com.mycompany.gameObjects;
+import java.util.Random;
+
 /** Represents a Drone GameObject.
 * @author  Josh Poe 
 * @version 1.0
@@ -7,8 +9,7 @@ package com.mycompany.gameObjects;
 import com.codename1.charts.models.Point;
 import com.codename1.charts.util.ColorUtil;
 import com.codename1.ui.Graphics;
-
-import java.util.Random;
+import com.mycompany.a3.GameWorld;
 
 public class Drone extends Movable {
 	private int damageLevel;
@@ -82,14 +83,15 @@ public class Drone extends Movable {
 	
 	
 	@Override
-	public void draw(Graphics g, Point p1) {
-		g.setColor(this.getcolor());
-		int xLoc = (int) (this.getPoint().getX() + p1.getX() - (getSize()/2));
-		int yLoc = (int) (this.getPoint().getY() + p1.getY() - (getSize()/2));
-		g.drawArc(xLoc, yLoc, this.getSize(), this.getSize(), 0, 360);
-		g.fillArc(xLoc, yLoc, this.getSize(), this.getSize(), 0, 360);
-		g.setColor(ColorUtil.BLACK);
-		g.drawString(this.getClass().getSimpleName(), xLoc, yLoc);
+	public void draw(Graphics g, Point pCmpRelPrnt) {
+		g.setColor(super.getcolor());
+		int xLoc = (int) (pCmpRelPrnt.getX()+ this.getPoint().getX());
+		int yLoc = (int) (pCmpRelPrnt.getY()+ this.getPoint().getY());
+		int size = this.getSize();
+		int [] traingleX = {xLoc-size/2, xLoc+size/2, xLoc};
+		int [] traingleY = {yLoc-size/2, yLoc-size/2, yLoc+size/2};
+		g.drawPolygon(traingleX, traingleY, 3);
+		super.draw(g, pCmpRelPrnt);
 	}
 		
 	/**
@@ -135,5 +137,11 @@ public class Drone extends Movable {
 		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getY());
 		return hash;
 	}
-		
+	
+
+	@Override
+	public void handleCollision(GameObject otherObject) {
+	
+	}
+
 }

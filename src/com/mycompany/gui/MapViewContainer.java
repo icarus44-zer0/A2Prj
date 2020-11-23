@@ -18,6 +18,7 @@ import com.mycompany.a3.GameObjectCollection;
 import com.mycompany.a3.GameWorld;
 import com.mycompany.a3.IDrawable;
 import com.mycompany.a3.IIterator;
+import com.mycompany.gameObjects.Base;
 import com.mycompany.gameObjects.GameObject;
 
 /**
@@ -26,7 +27,6 @@ import com.mycompany.gameObjects.GameObject;
  */
 public class MapViewContainer extends Container implements Observer {
 	private TextArea gameTextArea;
-	private Graphics graphics;
 
 	/**
 	 * @param flowLayout
@@ -81,17 +81,13 @@ public class MapViewContainer extends Container implements Observer {
 	 */
 	public void debugger() {
 		GameWorld gameWorld = GameWorld.getInstance();
-		gameWorld.debug();
+		//gameWorld.debug();
 	}
 	
 	@Override
 	public void paint(Graphics graphics)
 	{
 		super.paint(graphics);
-		int iPx = 0;
-		int iPy = 0;
-
-		//Point pCmpRelPrnt = new Point(iPx-getParent().getAbsoluteX(),iPy-getParent().getAbsoluteY());
 		Point pCmpRelPrnt = new Point(this.getX(), this.getY());
 		
 		
@@ -110,7 +106,6 @@ public class MapViewContainer extends Container implements Observer {
 	}
 
 	public int getMapWidth() {
-		// TODO Auto-generated method stub
 		return this.getWidth();
 	}
 

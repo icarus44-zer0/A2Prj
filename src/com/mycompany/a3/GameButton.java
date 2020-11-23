@@ -44,5 +44,7 @@ public class GameButton extends Button {
 		this.addActionListener(command);
 		
 	}
+	
+	
 }
 

@@ -7,7 +7,6 @@ package com.mycompany.gameObjects;
 
 import com.codename1.charts.models.Point;
 import com.codename1.charts.util.ColorUtil;
-import com.codename1.ui.Graphics;
 import com.mycompany.a3.ISteerable;
 
 
@@ -221,9 +220,8 @@ public abstract class Cyborg extends Movable implements ISteerable {
 	 */
 	@Override
 	public void move() {
-	super.move();
+			super.move();
 	}
-
 
 	/**
 	 * Overides the Gameobject
@@ -234,9 +232,9 @@ public abstract class Cyborg extends Movable implements ISteerable {
 		if (energyLevel == 0 ) {
 			super.setspeed(0);
 		}
-		if (speed <= MAXSPEED && (!(speed<0))) {
-			super.setspeed(speed * (maxDamageLevel - damageLevel) / 100);	
-		}
+//		if (speed <= MAXSPEED && (!(speed<0))) {
+//			super.setspeed(speed * (maxDamageLevel - damageLevel) / 100);	
+//		}
 		else if (speed > MAXSPEED) {
 			super.setspeed(MAXSPEED);
 		}
@@ -281,49 +279,49 @@ public abstract class Cyborg extends Movable implements ISteerable {
 		return myDesc;
 	}
 
-	/**
-	 *Overides equals opperator for Movable Cyborg Gameobject 
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		  if (!(obj instanceof Cyborg)) {
-	            return false;
-	        }
-		Cyborg test = (Cyborg) obj;
-		return test.damageLevel == this.damageLevel 
-				&& test.energyConsumptionRate == this.energyConsumptionRate
-				&& test.energyLevel == this.energyLevel 
-				&& test.lastBaseReached == this.lastBaseReached
-				&& test.maxBaseReached == this.maxBaseReached 
-				&& test.MAXSPEED == this.MAXSPEED
-				&& test.steeringDirection == this.steeringDirection 
-				&& test.getcolor() == this.getcolor()
-				&& test.getPoint() == this.getPoint() 
-				&& test.getSize() == this.getSize()
-				&& test.getspeed() == this.getspeed() 
-				&& test.getheading() == this.getheading(); 
-	}
-
-	/**
-	 *Overides hascode for Movable Cyborg Gameobject 
-	 */
-	@Override
-	public int hashCode() {
-		int hash = 17;
-		hash = 31 * hash + this.damageLevel;
-		hash = 31 * hash + this.energyConsumptionRate;
-		hash = 31 * hash + this.energyLevel;
-		hash = 31 * hash + this.lastBaseReached;
-		hash = 31 * hash + this.maxBaseReached;
-		hash = 31 * hash + this.MAXSPEED;
-		hash = 31 * hash + this.steeringDirection;
-		hash = 31 * hash + this.getcolor();
-		hash = 31 * hash + this.getSize();
-		hash = 31 * hash + this.getspeed();
-		hash = 31 * hash + this.getheading();
-		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getX());
-		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getY());
-		return hash;
-	}
+//	/**
+//	 *Overides equals opperator for Movable Cyborg Gameobject 
+//	 */
+//	@Override
+//	public boolean equals(Object obj) {
+//		  if (!(obj instanceof Cyborg)) {
+//	            return false;
+//	        }
+//		Cyborg test = (Cyborg) obj;
+//		return test.damageLevel == this.damageLevel 
+//				&& test.energyConsumptionRate == this.energyConsumptionRate
+//				&& test.energyLevel == this.energyLevel 
+//				&& test.lastBaseReached == this.lastBaseReached
+//				&& test.maxBaseReached == this.maxBaseReached 
+//				&& test.MAXSPEED == this.MAXSPEED
+//				&& test.steeringDirection == this.steeringDirection 
+//				&& test.getcolor() == this.getcolor()
+//				&& test.getPoint() == this.getPoint() 
+//				&& test.getSize() == this.getSize()
+//				&& test.getspeed() == this.getspeed() 
+//				&& test.getheading() == this.getheading(); 
+//	}
+//
+//	/**
+//	 *Overides hascode for Movable Cyborg Gameobject 
+//	 */
+//	@Override
+//	public int hashCode() {
+//		int hash = 17;
+//		hash = 31 * hash + this.damageLevel;
+//		hash = 31 * hash + this.energyConsumptionRate;
+//		hash = 31 * hash + this.energyLevel;
+//		hash = 31 * hash + this.lastBaseReached;
+//		hash = 31 * hash + this.maxBaseReached;
+//		hash = 31 * hash + this.MAXSPEED;
+//		hash = 31 * hash + this.steeringDirection;
+//		hash = 31 * hash + this.getcolor();
+//		hash = 31 * hash + this.getSize();
+//		hash = 31 * hash + this.getspeed();
+//		hash = 31 * hash + this.getheading();
+//		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getX());
+//		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getY());
+//		return hash;
+//	}
 
 }

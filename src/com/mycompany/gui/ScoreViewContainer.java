@@ -51,7 +51,10 @@ public class ScoreViewContainer extends Container implements Observer {
 	public void update(Observable observable, Object data) {
 		GameWorld gameWorld = GameWorld.getInstance();
 		playerCyborg = PlayerCyborg.getInstance();
-		timeValueLabel.setText("" + "0");//gameWorld.gettimeElapsed());
+		//timeValueLabel.setText("" + gameWorld.getTotalTimeElapsed());
+		timeValueLabel.setText("" + (int) gameWorld.gettimeElapsed());
+		//timeValueLabel.setText("" + 0);
+		
 		livesValueLabel.setText("" + gameWorld.getlives());
 		baseValueLabel.setText("" + playerCyborg.getlastBaseReached());
 		energyValueLabel.setText("" + playerCyborg.getenergyLevel());
