@@ -7,9 +7,10 @@ package com.mycompany.gameObjects;
 import com.codename1.charts.models.Point;
 import com.codename1.charts.util.ColorUtil;
 import com.codename1.ui.Graphics;
+import com.mycompany.a3.GameWorld;
 
 
-public class Base extends Fixed{
+public class Base extends Selectable{
 	private int sequenceNumber;
 	
 	/**
@@ -110,15 +111,21 @@ public class Base extends Fixed{
 	}
 
 	@Override
-	public void draw(Graphics g, Point p1) {
-		g.setColor(this.getcolor());
-		int xLoc = (int) (this.getPoint().getX() + p1.getX() - (getSize()/2));
-		int yLoc = (int) (this.getPoint().getY() + p1.getY() - (getSize()/2));
-		g.drawArc(xLoc, yLoc, this.getSize(), this.getSize(), 0, 360);
-		g.fillArc(xLoc, yLoc, this.getSize(), this.getSize(), 0, 360);
+	public void draw(Graphics g, Point pCmpRelPrnt) {
+		g.setColor(super.getcolor());
+		int xLoc = (int) (pCmpRelPrnt.getX()+ this.getPoint().getX());
+		int yLoc = (int) (pCmpRelPrnt.getY()+ this.getPoint().getY());
+		int sise = this.getSize();
+		int [] traingleX = {xLoc-sise/2, xLoc+sise/2, xLoc};
+		int [] traingleY = {yLoc-sise/2, yLoc-sise/2, yLoc+sise/2};
 		
+		g.fillPolygon(traingleX, traingleY, 3);
 		g.setColor(ColorUtil.BLACK);
-		g.drawString("" + sequenceNumber, xLoc, yLoc);
+		
+		
+		g.drawString("" + sequenceNumber, xLoc-10, yLoc-20);
+		
+		super.draw(g, pCmpRelPrnt);
 	}
 
 	@Override
@@ -137,6 +144,28 @@ public class Base extends Fixed{
 	public boolean contains(Point p1, Point p2) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	/**
+	 * 
+	 * @param GameObject
+	 * @return
+	 */
+	@Override
+	public boolean collidesWith(GameObject otherObject) {
+		float b_xMax = this.getPoint().getX() + this.getSize()/2 + 50;
+		float b_xMin = this.getPoint().getX() - this.getSize()/2 + 50;
+		float b_yMax = this.getPoint().getY() + this.getSize()/2 + 50;
+		float b_yMin = this.getPoint().getY() - this.getSize()/2 + 50;
+		float c_xLoc = otherObject.getPoint().getX();
+		float c_yLoc = otherObject.getPoint().getY();
+		return (c_xLoc <= b_xMax && c_xLoc >= b_xMin && c_yLoc <= b_yMax && c_yLoc >= b_yMin);
+	}
+
+
+	@Override
+	public void handleCollision(GameObject otherObject) {
+
 	}
 	
 }

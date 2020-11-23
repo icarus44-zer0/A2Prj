@@ -10,62 +10,112 @@ import com.mycompany.command.AccelerateCommand;
 import com.mycompany.command.SideMenuSoundItemCommand;
 
 public class SideMenuItemForm extends Form {
+	private  CheckBox aboutCheckbox;
+	private CheckBox accelerateValueCheckbox;
+	CheckBox soundValueCheckBox;
 	
 	/**
 	 * constructor for the sidemenu
 	 * @param gameToolbar
 	 */
 	public SideMenuItemForm(Toolbar gameToolbar) {
-		makeCheckbox(gameToolbar);
-		makeAccelerate(gameToolbar);
-		makeAbout(gameToolbar);
+		makeSoundCheckbox(gameToolbar);
+		makeAccelerateCheckbox(gameToolbar);
+		makeAboutCheckbox(gameToolbar);
+	}
+	
+	public SideMenuItemForm getForm() {
+		return this;
 	}
 
 	/**
 	 * creates the about command 
 	 * @param gameToolbar
 	 */
-	private void makeAbout(Toolbar gameToolbar) {
+	private void makeAboutCheckbox(Toolbar gameToolbar) {
 		
 		SideMenuAboutCommand aboutCommand = new SideMenuAboutCommand("About");
 
-		CheckBox aboutButton = new CheckBox();
+		aboutCheckbox = new CheckBox();
 		
-		aboutButton.setCommand(aboutCommand);
-		aboutButton.getAllStyles().setBgTransparency(255);
-		aboutButton.getAllStyles().setBgColor(ColorUtil.LTGRAY);	
-		gameToolbar.addComponentToSideMenu(aboutButton);
+		aboutCheckbox.setCommand(aboutCommand);
+		aboutCheckbox.getAllStyles().setBgTransparency(255);
+		aboutCheckbox.getAllStyles().setBgColor(ColorUtil.LTGRAY);	
+		gameToolbar.addComponentToSideMenu(aboutCheckbox);
 	}
 
 	/**
 	 * creates the accelerate command 
 	 * @param gameToolbar
 	 */
-	private void makeAccelerate(Toolbar gameToolbar) {
+	private void makeAccelerateCheckbox(Toolbar gameToolbar) {
 		
 		AccelerateCommand sideMenuAccelerateCommand = new AccelerateCommand("Accelerate", GameWorld.getInstance());
-		CheckBox accelerateValueButton = new CheckBox();
-		accelerateValueButton.setCommand(sideMenuAccelerateCommand);
-		accelerateValueButton.getAllStyles().setBgTransparency(255);
-		accelerateValueButton.getAllStyles().setBgColor(ColorUtil.LTGRAY);	
-		gameToolbar.addComponentToSideMenu(accelerateValueButton);		
+		accelerateValueCheckbox = new CheckBox();
+		accelerateValueCheckbox.setCommand(sideMenuAccelerateCommand);
+		accelerateValueCheckbox.getAllStyles().setBgTransparency(255);
+		accelerateValueCheckbox.getAllStyles().setBgColor(ColorUtil.LTGRAY);	
+		gameToolbar.addComponentToSideMenu(accelerateValueCheckbox);		
 	}
 
 	/**
 	 * creates the toolbar command 
 	 * @param gameToolbar
 	 */
-	private void makeCheckbox(Toolbar gameToolbar) {
+	private void makeSoundCheckbox(Toolbar gameToolbar) {
 		SideMenuSoundItemCommand sideMenuSoundItemCommand = new SideMenuSoundItemCommand("Sound", GameWorld.getInstance());
-		CheckBox soundValueCheckBox = new CheckBox();
+		soundValueCheckBox = new CheckBox();
 		
 		soundValueCheckBox.setCommand(sideMenuSoundItemCommand);
 		soundValueCheckBox.getAllStyles().setBgTransparency(255);
 		soundValueCheckBox.getAllStyles().setBgColor(ColorUtil.LTGRAY);	
 		gameToolbar.addComponentToSideMenu(soundValueCheckBox);
 	}
+
+	/**
+	 * @return the aboutCheckbox
+	 */
+	public CheckBox getAboutCheckbox() {
+		return aboutCheckbox;
+	}
+
+	/**
+	 * @param aboutCheckbox the aboutCheckbox to set
+	 */
+	public void setAboutCheckbox(CheckBox aboutCheckbox) {
+		this.aboutCheckbox = aboutCheckbox;
+	}
+
+	/**
+	 * @return the accelerateValueCheckbox
+	 */
+	public CheckBox getAccelerateValueCheckbox() {
+		return accelerateValueCheckbox;
+	}
+
+	/**
+	 * @param accelerateValueCheckbox the accelerateValueCheckbox to set
+	 */
+	public void setAccelerateValueCheckbox(CheckBox accelerateValueCheckbox) {
+		this.accelerateValueCheckbox = accelerateValueCheckbox;
+	}
+
+	/**
+	 * @return the soundValueCheckBox
+	 */
+	public CheckBox getSoundValueCheckBox() {
+		return soundValueCheckBox;
+	}
+
+	/**
+	 * @param soundValueCheckBox the soundValueCheckBox to set
+	 */
+	public void setSoundValueCheckBox(CheckBox soundValueCheckBox) {
+		this.soundValueCheckBox = soundValueCheckBox;
+	}
 	
 	
+
 	
 	
 }

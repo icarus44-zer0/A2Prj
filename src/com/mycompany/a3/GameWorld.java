@@ -1,6 +1,9 @@
 package com.mycompany.a3;
 
-
+import java.io.PrintStream;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Observable;
 import java.util.Random;
 import com.codename1.charts.models.Point;
@@ -12,10 +15,13 @@ import com.mycompany.gameObjects.Drone;
 import com.mycompany.gameObjects.EnergyStation;
 import com.mycompany.gameObjects.GameObject;
 import com.mycompany.gameObjects.Movable;
-import com.mycompany.gameObjects.NPCAttackStratagy;
 import com.mycompany.gameObjects.NPCCyborg;
-import com.mycompany.gameObjects.NPCNextBaseStratagy;
 import com.mycompany.gameObjects.PlayerCyborg;
+import com.mycompany.gui.MapViewContainer;
+import com.mycompany.sfx.ChargeSound;
+import com.mycompany.sfx.CrashSound;
+import com.mycompany.sfx.DeathSound;
+import com.mycompany.sfx.ThemeSound;
 
 /**
  * Represents a GameWorld.
@@ -30,11 +36,12 @@ public class GameWorld extends Observable {
 	private int gameWidth;
 	private int gameHeight;
 	private int lives;
-	private int timeElapsed;
+	private double timeElapsed;
+	private double totalTimeElapsed;
 	private boolean exitFlag;
 	private boolean soundFlag;
 	private boolean strategyflag;
-	private int baseSequenceNumber;
+	private int intialBaseSeqNumber;
 	private int baseCount;
 	private int npcCyborgCount;
 	private int droneCount;
@@ -43,27 +50,33 @@ public class GameWorld extends Observable {
 	private Point intiBasePoint;
 	private PlayerCyborg playerCyborg;
 	private GameObjectCollection gameObjectCollection;
+	private CrashSound crashSound;
+	private ChargeSound chargeSound;
+	private DeathSound deathSound;
+	private ThemeSound themeSound;
+	private ArrayList<Point> locationList;
 
 	/**
 	 * Constructor
 	 */
 	private GameWorld() {
 		gameObjectCollection = new GameObjectCollection();
+		locationList = new ArrayList<Point>();
 		lives = 3;
 		timeElapsed = 0;
 		exitFlag = false;
 		soundFlag = false;
 		strategyflag = false;
-		baseSequenceNumber = 1;
+		intialBaseSeqNumber = 1;
 		baseCount = 4;
-		npcCyborgCount = 4;
-		droneCount = 4;
+		npcCyborgCount = 3;
+		droneCount = 3;
 		eStationCount = 4;
 		playerCount = 1;
 	}
 
 	/**
-	 * Gets instance of Gameworld class
+	 * Gets instance of GameWorld class
 	 * 
 	 * @return GameWorld instance
 	 */
@@ -136,11 +149,12 @@ public class GameWorld extends Observable {
 		int energyLevel = 100;
 		int energyConsumptionRate = 0;
 		int damageLevel = 0;
-		int maxDamageLevel = 1000000;
+		int maxDamageLevel = 100;
 		int lastBaseReached = 1;
 		int maxBaseReached = 1;
 		int steeringDirection = 0;
-		int size = 50;
+		int size = 75;
+
 		Point point = intiBasePoint;
 		int heading = random.nextInt(359) + 1;
 		int speed = random.nextInt(10 - 5) + 5;
@@ -148,6 +162,16 @@ public class GameWorld extends Observable {
 
 		return PlayerCyborg.getInstance(energyLevel, energyConsumptionRate, damageLevel, maxDamageLevel,
 				lastBaseReached, maxBaseReached, steeringDirection, heading, speed, size, point, color);
+	}
+	
+	private void resetPlayerCyborg() {
+		Random random = new Random();
+		int r = 26, g = 188, b = 212; // Sea Blue
+		playerCyborg.setColor(r, g, b);
+		playerCyborg.setPoint(intiBasePoint);
+		
+		playerCyborg.setspeed(random.nextInt(10 - 5) + 5);
+		
 	}
 
 	/**
@@ -158,20 +182,12 @@ public class GameWorld extends Observable {
 		Random random = new Random();
 		Point point = setInitialPoint();
 
-		float min = 50f;
-		float max = 200f;
-		float deltaX = min + random.nextFloat() * (max - min);
-		float deltaY = min + random.nextFloat() * (max - min);
-
-		point.setX(point.getX() + deltaX);
-		point.setY(point.getY() + deltaY);
-
 		int r = 111, g = 23, b = 231; // Royal Purple
 
-		int energyLevel = 10000;
-		int energyConsumptionRate = 10;
+		int energyLevel = 100;
+		int energyConsumptionRate = 0;
 		int damageLevel = 0;
-		int maxDamageLevel = 10000;
+		int maxDamageLevel = 1000;
 		int lastBaseReached = 1;
 		int maxBaseReached = 1;
 		int steeringDirection = 0;
@@ -209,7 +225,7 @@ public class GameWorld extends Observable {
 		int r = 101, g = 247, b = 113; // Bright Green
 		int size = 50;
 		int color = ColorUtil.rgb(r, g, b);
-		return new Base(baseSequenceNumber++, size, point, color);
+		return new Base(intialBaseSeqNumber++, size, point, color);
 	}
 
 	/**
@@ -219,21 +235,63 @@ public class GameWorld extends Observable {
 	private EnergyStation initEnergyStation() {
 		Random random = new Random();
 		Point point = setInitialPoint();
-		int r = 180, g = 90, b = 11; // Burnt Orange
-		int size = random.nextInt(100 + 1) + 10;
+		int r = 255, g = 191, b = 0; // Burnt Orange
+		int size = 25 + random.nextInt(100 + 1) + 10;
 		int color = ColorUtil.rgb(r, g, b);
-		int capacity = size * 5;
+		int capacity = size * 3;
 		return new EnergyStation(capacity, size, point, color);
 	}
 
 	private Point setInitialPoint() {
 		Random random = new Random();
-
-		float x = (float)random.nextInt((gameWidth - 100) -100) +100;
-		float y = (float)random.nextInt((gameHeight - 100) -100) +100;
+		Point initPoint = new Point();
+		IIterator iter = gameObjectCollection.getIterator();
+		boolean isUnique = false;
+		boolean isProx = false;
+		float x;
+		float y;
 		
-		return new Point(x, y);
+
+		if (gameObjectCollection.isEmpty()) {
+			x = (float) random.nextInt((gameWidth - 150) - 100) + 100;
+			y = (float) random.nextInt((gameHeight - 150) - 100) + 100;
+			initPoint.setX(x);
+			initPoint.setY(y);
+			return initPoint;
+		} else {
+			while (!isUnique && !isProx) {
+				x = (float) random.nextInt((gameWidth - 150) - 100) + 100;
+				y = (float) random.nextInt((gameHeight - 150) - 100) + 100;
+				initPoint.setX(x);
+				initPoint.setY(y);
+
+				while (iter.hasNext()) {
+					GameObject object = (GameObject) iter.getNext();
+					if (initPoint.equals(object.getPoint())) {
+						isUnique = false;
+					}
+//					if(isProximity(initPoint, object.getPoint()){
+//						isProx = false;
+//					}
+					isUnique = true;
+					isProx = true;
+				}
+			}
+			return initPoint;
+		}
 	}
+
+//	private boolean isProximity(Point a, Point b) {
+//		float b_xMax = a.getX() + 50;
+//		float b_xMin = a.getX();
+//		float b_yMax = a.getY() + 50;
+//		float b_yMin = a.getY();
+//		
+//		float c_xLoc = b.getX();
+//		float c_yLoc = b.getY();
+//		
+//		return (b_xMax <= c_xLoc && b && c_yLoc <= b_yMax && c_yLoc >= b_yMin);
+//	}
 
 	/**
 	 * Getter for the lives of a the player cyborg.
@@ -284,8 +342,35 @@ public class GameWorld extends Observable {
 	/**
 	 * @return the timeElapsed
 	 */
-	public int gettimeElapsed() {
+	public double gettimeElapsed() {
 		return timeElapsed;
+	}
+
+	/**
+	 * 
+	 * @param i
+	 */
+	public void setElapsedTime(double i) {
+		timeElapsed = i;
+		setTotalTimeElapsed(i);
+	}
+
+	
+	
+	/**
+	 * @return the totalTimeElapsed
+	 */
+	public int getTotalTimeElapsed() {
+		return (int)totalTimeElapsed;
+	}
+
+	/**
+	 * @param totalTimeElapsed the totalTimeElapsed to set
+	 */
+	public void setTotalTimeElapsed(double totalTimeElapsed) {
+		this.totalTimeElapsed += totalTimeElapsed;
+//		setChanged();
+//		notifyObservers();
 	}
 
 	/**
@@ -312,22 +397,34 @@ public class GameWorld extends Observable {
 	}
 
 	/**
-	 * 
 	 * @return
 	 */
 	public GameObjectCollection getGameObjectCollection() {
 		return gameObjectCollection;
 	}
 
+	public void createSounds() {
+		try {
+			crashSound = new CrashSound("damage.wav");
+			deathSound = new DeathSound("LifeLost.wav");
+			chargeSound = new ChargeSound("retroPower.wav");
+			themeSound = new ThemeSound("resistors.mp3");
+		} catch (Exception e) {
+			
+		}
+
+	}
+
 	/**
 	 * 
 	 */
 	public void changeNPCStrategy() {
+		NPCCyborg npcCyborg =  null;
 		IIterator iterator = gameObjectCollection.getIterator();
 		while (iterator.hasNext()) {
 			GameObject gameObject = (GameObject) iterator.getNext();
 			if (gameObject instanceof NPCCyborg) {
-				NPCCyborg npcCyborg = (NPCCyborg) gameObject;
+				npcCyborg = (NPCCyborg) gameObject;
 				if (npcCyborg.getStrategy() instanceof NPCNextBaseStratagy) {
 					npcCyborg.setStrategy(new NPCAttackStratagy(npcCyborg));
 				} else {
@@ -335,10 +432,10 @@ public class GameWorld extends Observable {
 				}
 			}
 		}
-		checkNPCValues();
 		setChanged();
 		notifyObservers();
 	}
+	
 
 	/*
 	 * keyboard input "a" causes the player Cyborg to incriment speed by one.
@@ -368,7 +465,7 @@ public class GameWorld extends Observable {
 	 */
 	public void pCyborgturnLeft() {
 		playerCyborg.setsteeringDirection(-5);
-		System.out.println("Player Cyborg" + ": " + playerCyborg);
+		//System.out.println("Player Cyborg" + ": " + playerCyborg);
 		setChanged();
 		notifyObservers();
 	}
@@ -378,7 +475,7 @@ public class GameWorld extends Observable {
 	 */
 	public void pCyborgturnRight() {
 		playerCyborg.setsteeringDirection(5);
-		System.out.println("Player Cyborg" + ": " + playerCyborg);
+		//System.out.println("Player Cyborg" + ": " + playerCyborg);
 		setChanged();
 		notifyObservers();
 	}
@@ -387,22 +484,10 @@ public class GameWorld extends Observable {
 	 * Keyboard input "c" Simulates collision with another cyborg Causes damage to
 	 * the player cyborg based off size and speed of the other cyborg.
 	 */
-	public void pCyborgcyborgCollision(NPCCyborg npcCyborg) {
-		Cyborg refNPCyborg = null;
+	public void pCyborgcyborgCollision(NPCCyborg refNPCyborg) {
+		playerCyborg = PlayerCyborg.getInstance();
 
-		if (npcCyborg != null) {
-			refNPCyborg = npcCyborg;
-		} else {
-			IIterator iterator = gameObjectCollection.getIterator();
-			while (iterator.hasNext()) {
-				GameObject gameObject = (GameObject) iterator.getNext();
-				if (gameObject instanceof NPCCyborg) {
-					refNPCyborg = (NPCCyborg) gameObject;
-					break;
-				}
-			}
-		}
-
+	
 		int damageTaken = 10 + 10 * refNPCyborg.getSize() / 100 + 10 * playerCyborg.getspeed() / 100;
 		int currentDamage = playerCyborg.getdamageLevel();
 		int npcDamageTaken = 10 + 10 * refNPCyborg.getSize() / 100 + 10 * refNPCyborg.getspeed() / 100;
@@ -417,10 +502,16 @@ public class GameWorld extends Observable {
 		refNPCyborg.setspeed(refNPCyborg.getspeed()); // TODO create update speed method
 		refNPCyborg.fadeColor();
 
-		checkCyborgState();
+		themeSound.pause();
+		crashSound.play();
+		themeSound.play();
+
+		checkNpcValues(refNPCyborg);
+		checkPlayerValues();
+
 
 		System.out.println("Player Cyborg has collided with NPC Cyborg");
-		System.out.println("Player Cyborg" + ": " + playerCyborg);
+
 		setChanged();
 		notifyObservers();
 	}
@@ -430,28 +521,17 @@ public class GameWorld extends Observable {
 	 * 
 	 * @param takes in the base the player cyborg is to move to.
 	 */
-	public void pCyborgBaseCollison(int sequenceNumber) {
-		Base refBase = null;
+	public void pCyborgBaseCollison(Base refBase) {
 
-		IIterator iterator = gameObjectCollection.getIterator();
-		while (iterator.hasNext()) {
-			GameObject gameObject = (GameObject) iterator.getNext();
-			if (gameObject instanceof Base) {
-				refBase = (Base) gameObject;
-				if (refBase.getSequenceNumber() == sequenceNumber)
-					break;
-			} else
-				System.out.println("No Base at that location ");
+		playerCyborg = PlayerCyborg.getInstance();
+
+		if ( playerCyborg.getmaxBaseReached() + 1 == refBase.getSequenceNumber()) {
+			playerCyborg.setmaxBaseReached(refBase.getSequenceNumber());
 		}
 
-		if ((refBase.getSequenceNumber() - 1) == playerCyborg.getlastBaseReached()) {
-			playerCyborg.setlastBaseReached(refBase.getSequenceNumber());
-		}
-		playerCyborg.setPoint(refBase.getPoint());
-
-		System.out.println("Player Cyborg has collided with Base");
-		System.out.println("Player Cyborg" + ": " + playerCyborg);
-
+		System.out.println("Player Cyborg Collided with base " + refBase.getSequenceNumber());
+		checkPlayerValues();
+		
 		setChanged();
 		notifyObservers();
 	}
@@ -460,19 +540,7 @@ public class GameWorld extends Observable {
 	 * keyboard input "e" Simulates collision between player cyborg and energy
 	 * station adds energy to the cyborg.
 	 */
-	public void pCyborgeStationCollison() {
-		EnergyStation refStation = null;
-
-		IIterator theElements = gameObjectCollection.getIterator();
-		while (theElements.hasNext()) {
-			GameObject gameObject = (GameObject) theElements.getNext();
-			if (gameObject instanceof EnergyStation) {
-				refStation = (EnergyStation) gameObject;
-				if (refStation.getcapacity() != 0)
-					break;
-			}
-		}
-
+	public void pCyborgeStationCollison(EnergyStation refStation) {
 		playerCyborg.setPoint(refStation.getPoint());
 		int eCpacity = refStation.getcapacity();
 		refStation.setcapacity(0);
@@ -485,8 +553,14 @@ public class GameWorld extends Observable {
 		gameObjectCollection.add(energyStation);
 
 		System.out.println("Player Cyborg has collided with Energy Station");
-		System.out.println("Player Cyborg" + ": " + playerCyborg);
 
+		themeSound.pause();
+		chargeSound.play();
+		themeSound.play();
+		
+		
+		checkPlayerValues();
+		
 		setChanged();
 		notifyObservers();
 	}
@@ -495,31 +569,46 @@ public class GameWorld extends Observable {
 	 * keyboard input "g" Simulates collision between player cyborg and drone Causes
 	 * damage to the player cyborg based off size and speed of the drone.
 	 */
-	public void pCyborgdroneCollison() {
-		Drone refDrone = null;
+	public void pCyborgdroneCollison(Drone refDrone) {
+		
 
-		IIterator theElements = gameObjectCollection.getIterator();
-		while (theElements.hasNext()) {
-			GameObject gameObject = (GameObject) theElements.getNext();
-			if (gameObject instanceof Drone) {
-				refDrone = (Drone) gameObject;
-				break;
-			}
-		}
-
+		crashSound.play();
 		playerCyborg.setPoint(refDrone.getPoint());
 		playerCyborg.fadeColor();
 
 		int damage = 5 + 10 * refDrone.getSize() / 100 + 10 * playerCyborg.getspeed() / 100;
 		int curDamg = playerCyborg.getdamageLevel();
 		playerCyborg.setdamageLevel(curDamg + damage);
-		checkCyborgState();
-
 		playerCyborg.setspeed(playerCyborg.getspeed());
 
 		System.out.println("Player Cyborg has collided with Drone");
-		System.out.println("Player Cyborg" + ": " + playerCyborg);
+		
+		themeSound.pause();
+		crashSound.play();
+		themeSound.play();
+		
+		checkPlayerValues();
+		
+		setChanged();
+		notifyObservers();
+	}
 
+	/*
+	 * keyboard input "1-9" Simulates collision between player cyborg and base.
+	 * 
+	 * @param takes in the base the player cyborg is to move to.
+	 */
+	public void NPCCyborgBaseCollison(Base refBase, NPCCyborg refNpcCyborg) {
+
+		if ((refBase.getSequenceNumber() - 1) == refNpcCyborg.getlastBaseReached()) {
+			refNpcCyborg.setlastBaseReached(refBase.getSequenceNumber());
+		}
+		refNpcCyborg.setPoint(refBase.getPoint());
+
+		System.out.println("NPC Cyborg has collided with Base");
+		System.out.println("NPC Cyborg" + ": " + playerCyborg);
+		
+		checkNpcValues(refNpcCyborg);
 		setChanged();
 		notifyObservers();
 	}
@@ -528,16 +617,123 @@ public class GameWorld extends Observable {
 	 * keyboard input "t" advances the gameclock forward causes all movalble objects
 	 * to move based off heading and speed.
 	 */
-	public void tickGameClock() {
-		timeElapsed++;
-		checkPlayerValues();
-		checkPlayerLives();
-		checkNPCValues();
+	public void tickGameClock(double timeElapsed) {
+		this.timeElapsed += timeElapsed;
+		this.totalTimeElapsed += timeElapsed;
+		//themeSound.play();
 		moveAll();
+		checkCollisions();
 		setChanged();
 		notifyObservers();
 	}
 
+	private void checkCollisions() {
+		IIterator iter = gameObjectCollection.getIterator();
+		while(iter.hasNext())
+		{
+			Object thisObj = iter.getNext();
+			if(thisObj instanceof ICollider)
+			{
+				ICollider thisColliderObj = (ICollider) thisObj;
+				IIterator otherIter = gameObjectCollection.getIterator();
+				while(otherIter.hasNext())
+				{
+					Object otherObj = otherIter.getNext();
+					if(otherObj instanceof ICollider && !(thisObj.equals(otherObj)))
+					{
+						ICollider otherColliderObj = (ICollider) otherObj;
+						
+						if(thisColliderObj.collidesWith((GameObject) otherColliderObj))
+						{
+							thisColliderObj.handleCollision((GameObject) otherColliderObj);
+							
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	
+	
+//	
+//	/**
+//	 * 
+//	 */
+//	private void checkCollisions() {
+//		IIterator iter = gameObjectCollection.getIterator();
+//		IIterator iter2 = gameObjectCollection.getIterator();
+//
+//		while (iter.hasNext()) {
+//			GameObject obj1 = (GameObject) iter.getNext();
+//
+//			if (obj1 instanceof ICollider) {
+//				ICollider c1 = (ICollider) obj1;
+//				ArrayList<ICollider> c1ArrayList = c1.getCollideList();
+//
+//				while (iter2.hasNext()) {
+//					GameObject obj2 = (GameObject) iter2.getNext();
+//					
+//					if (obj2 instanceof ICollider && !(obj1.equals(obj2))) {
+//						ICollider c2 = (ICollider) obj2;
+//						ArrayList<ICollider> c2ArrayList = c2.getCollideList();
+//
+//						if (c1.collidesWith((GameObject) c2) == true) {
+//							//System.out.println("Colided " + c1.getClass().getSimpleName() + " + " + c2.getClass().getSimpleName());
+//							setNewCollsion(c1, c2, c1ArrayList, c2ArrayList);
+//							obj1.handleCollision(obj2);
+//							obj2.handleCollision(obj1);
+//						} else {
+//							removeCollsions(c1, c2, c1ArrayList, c2ArrayList);
+//						}
+//					}
+//				}
+//			}
+//		}
+//	}
+//
+//	/**
+//	 * 
+//	 * @param ICollider c1
+//	 * @param ICollider c2
+//	 */
+//	private void removeCollsions(ICollider c1, ICollider c2, ArrayList<ICollider> c1ArrayList,
+//			ArrayList<ICollider> c2ArrayList) {
+//
+//		if ((previousCollsion(c1, c2, c1ArrayList, c2ArrayList))) {
+//			c1ArrayList.remove(c1ArrayList.indexOf(c2));
+//			c2ArrayList.remove(c2ArrayList.indexOf(c1));
+//			System.out.println("Removed " + c1.getClass().getSimpleName() + " + " + c2.getClass().getSimpleName());
+//		}
+//
+//	}
+//
+//	/**
+//	 * 
+//	 * @param ICollider c1
+//	 * @param ICollider c2
+//	 */
+//	private void setNewCollsion(ICollider c1, ICollider c2, ArrayList<ICollider> c1ArrayList,
+//			ArrayList<ICollider> c2ArrayList) {
+//
+//		if (!(previousCollsion(c2, c2, c2ArrayList, c2ArrayList))) {
+//			c1ArrayList.add(c2);
+//			c2ArrayList.add(c1);
+//			System.out.println("Added " + c1.getClass().getSimpleName() + " + " + c2.getClass().getSimpleName());
+//		}
+//	}
+//
+//	/**
+//	 * 
+//	 * @param ICollider c1
+//	 * @param ICollider c2
+//	 * @return
+//	 */
+//	private boolean previousCollsion(ICollider c1, ICollider c2, ArrayList<ICollider> c1ArrayList,
+//			ArrayList<ICollider> c2ArrayList) {
+//		return(c1ArrayList.contains(c2) && c2ArrayList.contains(c1));
+//	}
+//
 	/**
 	 * 
 	 */
@@ -552,17 +748,17 @@ public class GameWorld extends Observable {
 		}
 	}
 
-	/**
-	 * 
-	 */
-	private void checkPlayerLives() {
-		if (lives < 0) {
-			System.out.println("Player Cyborg has no remaining lives");
-			System.out.println("GAMEOVER");
-			Display.getInstance().exitApplication();
-			return;
-		}
-	}
+//	/**
+//	 * 
+//	 */
+//	private void checkPlayerLives() {
+//		if (lives < 0) {
+//			System.out.println("Player Cyborg has no remaining lives");
+//			System.out.println("GAMEOVER");
+//			Display.getInstance().exitApplication();
+//			return;
+//		}
+//	}
 
 	/**
 	 * 
@@ -570,6 +766,10 @@ public class GameWorld extends Observable {
 	private void checkPlayerValues() {
 		if (playerCyborg.getdamageLevel() >= playerCyborg.getMAXDAMAGELEVEL()) {
 			lives--;
+			themeSound.pause();
+			deathSound.play();
+			themeSound.play();
+			resetPlayerCyborg();
 			if (lives >= 0) {
 				int r = 170, g = 169, b = 173; // initial color
 				playerCyborg.setdamageLevel(0);
@@ -580,6 +780,10 @@ public class GameWorld extends Observable {
 
 		else if (playerCyborg.getenergyLevel() <= 0) {
 			lives--;
+			themeSound.pause();
+			deathSound.play();
+			themeSound.play();
+			resetPlayerCyborg();
 			if (lives >= 0) {
 				int r = 170, g = 169, b = 173; // initial color
 				playerCyborg.setdamageLevel(0);
@@ -587,48 +791,16 @@ public class GameWorld extends Observable {
 				playerCyborg.setenergyLevel(100);
 			}
 		}
-	}
-
-	/**
-	 * 
-	 */
-	private void checkNPCValues() {
-		IIterator theElements = gameObjectCollection.getIterator();
-		while (theElements.hasNext()) {
-			GameObject gameObject = (GameObject) theElements.getNext();
-			if (gameObject instanceof NPCCyborg) {
-				NPCCyborg npc = (NPCCyborg) gameObject;
-				if (npc.getmaxBaseReached() == baseCount) {
-					System.out.println("NPC HAS REACHED FINAL BASE");
-					System.out.println("GAMEOVER");
-					Display.getInstance().exitApplication();
-					return;
-				}
-
-			}
-		}
-	}
-
-	/**
-	 * Checks to see if the player cyborg is in a dead state has no energy or has
-	 * reached max damage
-	 * 
-	 * @param playerCyborg the player cyborg to check
-	 * @param str          the player cyborg toString used to print final cyborg
-	 *                     state.
-	 */
-	public void checkCyborgState() {
-		if (playerCyborg.getdamageLevel() >= playerCyborg.getMAXDAMAGELEVEL()) {
-			lives--;
-			if (lives >= 0) {
-				int r = 170, g = 169, b = 173; // initial color
-				playerCyborg.setdamageLevel(0);
-				playerCyborg.setColor(r, g, b);
-				playerCyborg.setenergyLevel(100);
-			}
+		
+		
+		else if (playerCyborg.getmaxBaseReached() == baseCount) {
+			System.out.println("NPC HAS REACHED FINAL BASE");
+			System.out.println("GAMEOVER");
+			Display.getInstance().exitApplication();
+			return;
 		}
 
-		if (lives < 0) {
+		else if (lives < 0) {
 			System.out.println("CYBORG HAS NO REMAINING LIVES");
 			System.out.println("GAMEOVER");
 			System.out.println("FINAL STATS");
@@ -637,42 +809,60 @@ public class GameWorld extends Observable {
 			Display.getInstance().exitApplication();
 			return;
 		}
-		setChanged();
-		notifyObservers();
 	}
 
-	/*
-	 * Keyboard input "x" d prompts the user to the exit the game.
+	/**
+	 * 
 	 */
-	@Deprecated
-	public void promptExitGame() {
-		System.out.println();
-		System.out.println("Would you like to end the game");
-		System.out.println("y: yes");
-		System.out.println("n: no");
-		System.out.println();
-		this.exitFlag = true;
-	}
-
-	/*
-	 * Keyboard input "y" confirms the user to exit the game.
-	 */
-	@Deprecated
-	public void confirmExitGame() {
-		if (this.exitFlag == true) {
-			System.out.println(
-					"\n \n \n \n \n \nThe Enrichment Center is committed to the well being of all participants.");
+	private void checkNpcValues(NPCCyborg npc) {
+		if (npc.getmaxBaseReached() == baseCount) {
+			System.out.println("NPC HAS REACHED FINAL BASE");
+			System.out.println("GAMEOVER");
 			Display.getInstance().exitApplication();
+			return;
 		}
 	}
+//
+//	/**
+//	 * Checks to see if the player cyborg is in a dead state has no energy or has
+//	 * reached max damage
+//	 * 
+//	 * @param playerCyborg the player cyborg to check
+//	 * @param str          the player cyborg toString used to print final cyborg
+//	 *                     state.
+//	 */
+//	public void checkCyborgState() {
+//		if (playerCyborg.getdamageLevel() >= playerCyborg.getMAXDAMAGELEVEL()) {
+//			lives--;
+//			deathSound.play();
+//			if (lives >= 0) {
+//				int r = 170, g = 169, b = 173; // initial color
+//				playerCyborg.setdamageLevel(0);
+//				playerCyborg.setColor(r, g, b);
+//				playerCyborg.setenergyLevel(100);
+//			}
+//		}
+//		
+//		if (playerCyborg.getmaxBaseReached() == baseCount) {
+//			System.out.println("NPC HAS REACHED FINAL BASE");
+//			System.out.println("GAMEOVER");
+//			Display.getInstance().exitApplication();
+//			return;
+//		}
+//
+//		if (lives < 0) {
+//			System.out.println("CYBORG HAS NO REMAINING LIVES");
+//			System.out.println("GAMEOVER");
+//			System.out.println("FINAL STATS");
+//			System.out.println("PLAYER CYBORG");
+//			System.out.println(playerCyborg);
+//			Display.getInstance().exitApplication();
+//			return;
+//		}
+//		setChanged();
+//		notifyObservers();
+//	}
 
-	/*
-	 * Keyboard input "n" confirms to decline the user exiting the game.
-	 */
-	@Deprecated
-	public void declineExitGame() {
-		this.exitFlag = false;
-	}
 
 	/*
 	 * keyboard input "d" displays the current status of the player cyborg.
@@ -697,10 +887,23 @@ public class GameWorld extends Observable {
 	}
 
 	public void debug() {
-		objectsInBounds_Width();
-		objectsInBounds_Heigth();
-		playerLocation();
-		npcNeverWin();
+		// objectsInBounds_Width();
+		// objectsInBounds_Heigth();
+		// playerLocation();
+		// npcNeverWin();
+		// printMap();
+
+	}
+
+	private void printMap() {
+		GameWorld gameWorld = GameWorld.getInstance();
+		GameObjectCollection gameObjectCollection = gameWorld.getGameObjectCollection();
+		IIterator it = gameObjectCollection.getIterator();
+		while (it.hasNext()) {
+			GameObject gameObject = (GameObject) it.getNext();
+			System.out.println(gameObject.getClass().getSimpleName() + ": " + gameObject.toString());
+
+		}
 
 	}
 
@@ -764,6 +967,14 @@ public class GameWorld extends Observable {
 			}
 
 		}
+	}
+
+	public void playThemeMusic() {
+		themeSound.play();
+	}
+
+	public void pauseThemeMusic() {
+		themeSound.pause();
 	}
 
 }

@@ -6,10 +6,15 @@ package com.mycompany.a3;
 */
 
 
+import java.util.ArrayList;
+
+import com.codename1.charts.models.Point;
+import com.codename1.charts.util.ColorUtil;
 import com.codename1.ui.Component;
 import com.codename1.ui.Container;
 import com.codename1.ui.Form;
 import com.codename1.ui.Label;
+import com.codename1.ui.SelectableIconHolder;
 import com.codename1.ui.Toolbar;
 import com.codename1.ui.layouts.BorderLayout;
 import com.codename1.ui.layouts.BoxLayout;
@@ -19,6 +24,10 @@ import com.mycompany.command.*;
 import com.mycompany.gui.MapViewContainer;
 import com.mycompany.gui.ScoreViewContainer;
 import com.mycompany.gui.SideMenuItemForm;
+import com.mycompany.sfx.ChargeSound;
+import com.mycompany.sfx.CrashSound;
+import com.mycompany.sfx.DeathSound;
+import com.mycompany.sfx.ThemeSound;
 
 
 public class Game extends Form implements Runnable{
@@ -31,40 +40,30 @@ public class Game extends Form implements Runnable{
 	private TurnRightCommand turnRightCommand;
 	private ChangeStratsCommand changeStratsCommand;
 	private AccelerateCommand accelerateCommand;
-	private BreakCommand BrakeCommand;
-	private NPCCollisionCommand NPCCyborgColCommand;
-	private EstatCollisionCommand eStationColCommand;
-	private DroneCollisionCommand droneColCommand;
-	private BaseCollisionCommand baseColCommand;
-	private TickGameClockCommand tickGameClockCommand;
+	private BreakCommand breakCommand;
+	private PositionCommand positionCommand;
+	private PauseCommand pauseCommand;
 	private GameButton turnLeftButton;
 	private GameButton turnRightButton;
 	private GameButton changeStratsButton;
 	private GameButton accelerateButton;
 	private GameButton brakeButton;
-	private GameButton NPCCollisionButton;
-	private GameButton droneCollisionButton;
-	private GameButton eStationCollisionButton;
-	private GameButton baseCollisionButton;
-	private GameButton tickGameClockButton;
+	private GameButton positionButton;
+	private GameButton pauseButton;
 	private Toolbar gameToolbar;
 	private UITimer timer;
+	private HelpCommand helpCommand;
+	private ExitGameCommand exitGameCommand;
+	private SideMenuItemForm sideMenuItemForm;
+	
 	private int mapViewContainer_Height;
 	private int mapViewContainer_Width;
-	private int scoreViewContainer_Height;
-	private int scoreViewContainer_Width;
-	private int leftContainer_Height;
-	private int leftContainer_Width;
-	private int rightContainer_Height;
-	private int rightContainer_Width;
-	private int bottomContainer_Height;
-	private int bottomContainer_Width;
-	
 	
 	/*
 	 * Controller Class
 	 */
 	public Game() {		
+
 		setLayout(new BorderLayout());
 		initContiners();
 		initToolBar();
@@ -74,48 +73,39 @@ public class Game extends Form implements Runnable{
 		initChangeStrategies();
 		initAccelerate();
 		initBrake();
-		initCollisionCyborg();
-		initCollisionBase();
-		initCollisioneStat();
-		initCollisionDrone();
-		initGameClock();
-		this.show();
+		initPosition();
+		initPause();
 		
+		this.show();
+		timer = new UITimer(this);
 		calcuateGameMapLocation();
 		setupGameWorld();
-		SetupTimer();
+		StartTimer();
+		
+		//SPAM is what bugs crave!
+		for (int i=0; i < 10;i++) {
+			this.pause();
+			this.unpause();
+		}
+		revalidate();
 	}
 	
-	private void SetupTimer() {
-		timer = new UITimer(this);
+	
+	public void StartTimer() {
 		timer.schedule(20, true, this);
 	}
 
 	private void setupGameWorld() {
 		GameWorld gameWorld = GameWorld.getInstance();
 		gameWorld.init(mapViewContainer_Width, mapViewContainer_Height);;
+		gameWorld.createSounds();
 		gameWorld.addObserver(mapViewContainer); 
 		gameWorld.addObserver(scoreViewContainer); 
 	}
 
 	private void calcuateGameMapLocation() {
-		
 		mapViewContainer_Height = mapViewContainer.getHeight();
 		mapViewContainer_Width = mapViewContainer.getWidth();
-		
-		//mapViewContainer_Height = mapViewContainer.getMapHeight();
-		//mapViewContainer_Width = mapViewContainer.getMapWidth();
-		
-		scoreViewContainer_Height = scoreViewContainer.getAbsoluteY();
-		scoreViewContainer_Width = scoreViewContainer.getAbsoluteX();
-		
-		leftContainer_Height = leftContainer.getHeight();
-		leftContainer_Width = leftContainer.getWidth();
-		
-		rightContainer_Height = rightContainer.getHeight();
-		rightContainer_Width = rightContainer.getWidth();
-		bottomContainer_Height = bottomContainer.getHeight();
-		bottomContainer_Width = bottomContainer.getWidth();
 	}
 
 	/**
@@ -179,74 +169,45 @@ public class Game extends Form implements Runnable{
 	 */
 	private void initBrake() {
 		GameWorld gameWorld = GameWorld.getInstance();
-		BrakeCommand = new BreakCommand("Break", gameWorld);
-		brakeButton = new GameButton(BrakeCommand);
+		breakCommand = new BreakCommand("Break", gameWorld);
+		brakeButton = new GameButton(breakCommand);
 		rightContainer.add(brakeButton);
-		addKeyListener('b', BrakeCommand);
-	}
-
-	/**
-	 * 
-	 */
-	private void initCollisionCyborg() {
-		GameWorld gameWorld = GameWorld.getInstance();
-		NPCCyborgColCommand = new NPCCollisionCommand("NPC Cyborg Collision", gameWorld);
-		NPCCollisionButton = new GameButton(NPCCyborgColCommand);
-		bottomContainer.add(NPCCollisionButton);
-		addKeyListener('c', NPCCyborgColCommand);
-	}
-
-	/**
-	 * 
-	 */
-	private void initCollisionBase() {
-		GameWorld gameWorld = GameWorld.getInstance();
-		baseColCommand = new BaseCollisionCommand("Base Collision", gameWorld);
-		baseCollisionButton = new GameButton(baseColCommand);
-		bottomContainer.add(baseCollisionButton);
-		addKeyListener('1', baseColCommand);
-		addKeyListener('2', baseColCommand);
-		addKeyListener('3', baseColCommand);
-		addKeyListener('4', baseColCommand);
-		addKeyListener('5', baseColCommand);
-		addKeyListener('6', baseColCommand);
-		addKeyListener('7', baseColCommand);
-		addKeyListener('8', baseColCommand);
-		addKeyListener('9', baseColCommand);
+		addKeyListener('b', breakCommand);
 	}
 	
-	/**
-	 * 
-	 */
-	private void initCollisioneStat() {
+	private void initPause() {
 		GameWorld gameWorld = GameWorld.getInstance();
-		eStationColCommand = new EstatCollisionCommand("eStation Collision", gameWorld);
-		eStationCollisionButton = new GameButton(eStationColCommand);
-		bottomContainer.add(eStationCollisionButton);
-		addKeyListener('e', eStationColCommand);
+		pauseCommand = new PauseCommand("Pause", gameWorld, timer, accelerateButton, accelerateButton, this);
+		pauseButton = new GameButton(pauseCommand);
+		bottomContainer.add(pauseButton);
+	}
+	
+	private void initPosition() {
+		GameWorld gameWorld = GameWorld.getInstance();
+		positionCommand = new PositionCommand("Position", gameWorld);
+		positionButton = new GameButton(positionCommand);
+		positionButton.setEnabled(false);
+		bottomContainer.add(positionButton);
 	}
 
-	/**
-	 * 
-	 */
-	private void initCollisionDrone() {
-		GameWorld gameWorld = GameWorld.getInstance();
-		droneColCommand = new DroneCollisionCommand("Drone Collision", gameWorld);
-		droneCollisionButton = new GameButton(droneColCommand);
-		bottomContainer.add(droneCollisionButton);
-		addKeyListener('g', droneColCommand);
+	private void enablelisteners() {
+		addKeyListener('b', breakCommand);
+		addKeyListener('a', accelerateCommand);
+		addKeyListener('s', turnRightCommand);
+		addKeyListener('r', turnRightCommand);
+		addKeyListener('l', turnLeftCommand);
+		addKeyListener('x', exitGameCommand);
 	}
-
-	/**
-	 * 
-	 */
-	private void initGameClock() {
-		GameWorld gameWorld = GameWorld.getInstance();
-		tickGameClockCommand = new TickGameClockCommand("Tick Game Clock", gameWorld);
-		tickGameClockButton = new GameButton(tickGameClockCommand);
-		bottomContainer.add(tickGameClockButton);
-		addKeyListener('t', tickGameClockCommand);
+	
+	private void disablelisteners() {
+		removeKeyListener('b', breakCommand);
+		removeKeyListener('a', accelerateCommand);
+		removeKeyListener('s', turnRightCommand);
+		removeKeyListener('r', turnRightCommand);
+		removeKeyListener('l', turnLeftCommand);
+		removeKeyListener('x', exitGameCommand);
 	}
+	
 
 	/**
 	 * 
@@ -255,12 +216,14 @@ public class Game extends Form implements Runnable{
 		gameToolbar = new Toolbar();
 		setToolbar(gameToolbar);
 		
+		sideMenuItemForm = new SideMenuItemForm(gameToolbar);
+		
 		Label gameLabel = new Label("Keep On Track Game");
 		gameToolbar.setTitleComponent(gameLabel);
-		gameToolbar.addComponentToSideMenu(new SideMenuItemForm(gameToolbar));	
+		gameToolbar.addComponentToSideMenu(sideMenuItemForm);	
 
-		HelpCommand helpCommand = new HelpCommand("Help");
-		ExitGameCommand exitGameCommand = new ExitGameCommand("Exit Game"); 
+		helpCommand = new HelpCommand("Help");
+		exitGameCommand = new ExitGameCommand("Exit Game"); 
 		
 		addKeyListener('x', exitGameCommand);
 		
@@ -285,7 +248,58 @@ public class Game extends Form implements Runnable{
 	@Override
 	public void run() {
 		GameWorld gameWorld = GameWorld.getInstance();
-		gameWorld.tickGameClock();
+		double twentymillis = .02;
+		gameWorld.tickGameClock(twentymillis);
+		//gameWorld.playThemeMusic();
+		//gameWorld.setElapsedTime(20/1000); // 20 milliseconds
 		mapViewContainer.repaint();
+	}
+
+	public void pause() {
+		timer.cancel();
+		positionButton.setEnabled(true);
+		GameWorld.getInstance().pauseThemeMusic();
+		disablelisteners();
+		enablePosition();
+		GameWorld.getInstance().pauseThemeMusic();
+		pauseButton.setText("Play");
+		accelerateButton.setEnabled(false);
+		turnLeftButton.setEnabled(false);
+		brakeButton.setEnabled(false);
+		changeStratsButton.setEnabled(false);
+		turnRightButton.setEnabled(false);
+		
+		sideMenuItemForm.getAboutCheckbox().setEnabled(false);
+		sideMenuItemForm.getAccelerateValueCheckbox().setEnabled(false);
+		sideMenuItemForm.getSoundValueCheckBox().setEnabled(false);
+
+	}
+	
+	private void enablePosition() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void unpause() {
+		timer.schedule(20, true, this);
+		positionButton.setEnabled(false);
+		enablelisteners();
+		disablePosition();
+		pauseButton.setText("Pause");
+		GameWorld.getInstance().playThemeMusic();
+		accelerateButton.setEnabled(true);
+		turnLeftButton.setEnabled(true);
+		brakeButton.setEnabled(true);
+		changeStratsButton.setEnabled(true);
+		turnRightButton.setEnabled(true);
+		sideMenuItemForm.getAboutCheckbox().setEnabled(true);
+		sideMenuItemForm.getAccelerateValueCheckbox().setEnabled(true);
+		sideMenuItemForm.getSoundValueCheckBox().setEnabled(true);
+		
+	}
+
+	private void disablePosition() {
+		// TODO Auto-generated method stub
+		
 	}
 }
