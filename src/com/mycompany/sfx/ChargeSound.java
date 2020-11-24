@@ -6,7 +6,7 @@ import com.codename1.media.Media;
 import com.codename1.media.MediaManager;
 import com.codename1.ui.Display;
 
-public class ChargeSound{
+public class ChargeSound {
 
 	private Media m;
 
@@ -14,18 +14,19 @@ public class ChargeSound{
 		if (Display.getInstance().getCurrent() == null) {
 			System.exit(0);
 		}
-		try {
-			InputStream is = Display.getInstance().getResourceAsStream(getClass(), "/" + fileName);
-			m = MediaManager.createMedia(is, "audio/wav");
-		} catch (IOException e) {
-			System.out.println("MARCELOUS WALLACE");
+		while (m == null) {
+			try {
+				InputStream is = Display.getInstance().getResourceAsStream(getClass(), "/" + fileName);
+				m = MediaManager.createMedia(is, "audio/wav");
+			} catch (IOException e) {
+				System.out.println("MARCELOUS WALLACE");
+			}
 		}
 	}
 
 	public void pause() {
 		m.pause();
 	}
-
 
 	public void play() {
 		// start playing the sound from time zero (beginning of the sound file)

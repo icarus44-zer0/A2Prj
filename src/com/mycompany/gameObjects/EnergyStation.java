@@ -22,8 +22,8 @@ public class EnergyStation extends Selectable {
 	 * @param point
 	 * @param color
 	 */
-	public EnergyStation(int capacity, int size, Point point, int color) {
-		super(size, point, color);
+	public EnergyStation(int capacity, int size, Point point, int color, int UUID) {
+		super(size, point, color, UUID);
 		
 	    this.capacity = capacity;
 	}
@@ -83,10 +83,12 @@ public class EnergyStation extends Selectable {
 		g.fillArc(xLoc, yLoc, this.getSize(), this.getSize(), 0, 360);
 		g.setColor(ColorUtil.BLACK);
 		g.drawString("" + capacity, xLoc+getSize()/2, yLoc+getSize()/2);
-		super.draw(g, pCmpRelPrnt);
+		
+		if(isSelected()) {
+			super.draw(g, pCmpRelPrnt);
+		}
+		
 	}
-
-
 
 	/**
 	 * overides toString for Fixed Energy Station Gameobject. 
@@ -100,72 +102,6 @@ public class EnergyStation extends Selectable {
 		return myDesc;	
 		
 	}
-	
-	/**
-	 * overides equals for Fixed Energy Station Gameobject. 
-	 */
-//	@Override
-//	public boolean equals(Object obj) {
-//		  if (!(obj instanceof EnergyStation)) {
-//	            return false;
-//	        }
-//		  EnergyStation test = (EnergyStation) obj;
-//			return test.capacity == this.capacity
-//					&& test.MAXCAPACITY == this.MAXCAPACITY
-//					&& test.getcolor() == this.getcolor()
-//					&& test.getPoint() == this.getPoint() 
-//					&& test.getSize() == this.getSize();
-//	}
-//
-//	/**
-//	 * overides hascode for Fixed Energy Station Gameobject.
-//	 */
-//	@Override
-//	public int hashCode() {
-//		int hash = 19;
-//		hash = 31 * hash + this.capacity;
-//		hash = 31 * hash + this.MAXCAPACITY;
-//		hash = 31 * hash + this.getcolor();
-//		hash = 31 * hash + this.getSize();
-//		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getX());
-//		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getY());
-//		return hash;
-//	}
-
-	@Override
-	public void setSelected(boolean isSelected) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean isSelected() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean contains(Point p1, Point p2) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-	
-//	/**
-//	 * 
-//	 * @param GameObject
-//	 * @return
-//	 */
-//	@Override
-//	public boolean collidesWith(GameObject otherObject) {
-//		float b_xMax = this.getPoint().getX() + this.getSize()/2 + 50;
-//		float b_xMin = this.getPoint().getX() - this.getSize()/2 + 50;
-//		float b_yMax = this.getPoint().getY() + this.getSize()/2 + 50;
-//		float b_yMin = this.getPoint().getY() - this.getSize()/2 + 50;
-//		float c_xLoc = otherObject.getPoint().getX();
-//		float c_yLoc = otherObject.getPoint().getY();
-//		return (c_xLoc <= b_xMax && c_xLoc >= b_xMin && c_yLoc <= b_yMax && c_yLoc >= b_yMin);
-//	}
-
 
 	@Override
 	public void handleCollision(GameObject otherObject) {
@@ -179,6 +115,5 @@ public class EnergyStation extends Selectable {
 
 	public void setCollisionFlag(boolean b) {
 		collisionFlag = true;
-		
 	}
 }

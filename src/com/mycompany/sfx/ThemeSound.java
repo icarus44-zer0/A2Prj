@@ -14,14 +14,15 @@ public class ThemeSound implements Runnable{
 		if (Display.getInstance().getCurrent() == null) {
 			System.exit(0);
 		}
-		try {
-			InputStream is = Display.getInstance().getResourceAsStream(getClass(), "/" + fileName);
-			m = MediaManager.createMedia(is, "audio/mp3");
-		} catch (IOException e) {
-			System.out.println("MARCELOUS WALLACE");
+		while (m == null) {
+			try {
+				InputStream is = Display.getInstance().getResourceAsStream(getClass(), "/" + fileName);
+				m = MediaManager.createMedia(is, "audio/wav");
+			} catch (IOException e) {
+				System.out.println("MARCELOUS WALLACE");
+			}
 		}
 	}
-	
 	
 	public void pause() {
 		m.pause();
@@ -29,7 +30,6 @@ public class ThemeSound implements Runnable{
 
 
 	public void play() {
-		// start playing the sound from time zero (beginning of the sound file)
 		m.setTime(0);
 		m.play();
 	}
@@ -38,6 +38,5 @@ public class ThemeSound implements Runnable{
 	public void run() {
 		m.setTime(0);
 		m.play();
-		
 	}
 }

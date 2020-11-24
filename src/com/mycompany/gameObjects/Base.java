@@ -12,7 +12,8 @@ import com.mycompany.a3.GameWorld;
 
 public class Base extends Selectable{
 	private int sequenceNumber;
-	private boolean collisionFlag = false; 
+	private boolean collisionFlag = false;
+
 	/**
 	 * 
 	 * @param sequenceNumber
@@ -20,8 +21,8 @@ public class Base extends Selectable{
 	 * @param point
 	 * @param color
 	 */
-	public Base(int sequenceNumber, int size, Point point, int color) {	
-		super(size, point, color);
+	public Base(int sequenceNumber, int size, Point point, int color, int UUID) {	
+		super(size, point, color, UUID);
 		this.sequenceNumber = sequenceNumber;
 	}
 		
@@ -81,35 +82,6 @@ public class Base extends Selectable{
 		return myDesc;		
 	}
 	
-	/**
-	 * overides equals for Fixed Base Gameobject. 
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		  if (!(obj instanceof Base)) {
-	            return false;
-	        }
-		  	Base test = (Base) obj;
-			return test.sequenceNumber == this.sequenceNumber 
-					&& test.getcolor() == this.getcolor()
-					&& test.getPoint() == this.getPoint() 
-					&& test.getSize() == this.getSize();
-	}
-
-	/**
-	 * overides hascode for Fixed Base Gameobject. 
-	 */
-	@Override
-	public int hashCode() {
-		int hash = 13;
-		hash = 31 * hash + this.sequenceNumber;
-		hash = 31 * hash + this.getcolor();
-		hash = 31 * hash + this.getSize();
-		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getX());
-		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getY());
-		return hash;
-	}
-
 	@Override
 	public void draw(Graphics g, Point pCmpRelPrnt) {
 		g.setColor(super.getcolor());
@@ -120,48 +92,14 @@ public class Base extends Selectable{
 		int [] traingleY = {yLoc-sise/2, yLoc-sise/2, yLoc+sise/2};
 		
 		g.fillPolygon(traingleX, traingleY, 3);
+		
 		g.setColor(ColorUtil.BLACK);
+		g.drawString("" + sequenceNumber, xLoc, yLoc);
 		
-		
-		g.drawString("" + sequenceNumber, xLoc-10, yLoc-20);
-		
-		super.draw(g, pCmpRelPrnt);
+		if(isSelected()) {
+			super.draw(g, pCmpRelPrnt);
+		}
 	}
-
-	@Override
-	public void setSelected(boolean isSelected) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean isSelected() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean contains(Point p1, Point p2) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-//	/**
-//	 * 
-//	 * @param GameObject
-//	 * @return
-//	 */
-//	@Override
-//	public boolean collidesWith(GameObject otherObject) {
-//		float b_xMax = this.getPoint().getX() + this.getSize()/2 + 50;
-//		float b_xMin = this.getPoint().getX() - this.getSize()/2 + 50;
-//		float b_yMax = this.getPoint().getY() + this.getSize()/2 + 50;
-//		float b_yMin = this.getPoint().getY() - this.getSize()/2 + 50;
-//		float c_xLoc = otherObject.getPoint().getX();
-//		float c_yLoc = otherObject.getPoint().getY();
-//		return (c_xLoc <= b_xMax && c_xLoc >= b_xMin && c_yLoc <= b_yMax && c_yLoc >= b_yMin);
-//	}
-
 
 	@Override
 	public void handleCollision(GameObject otherObject) {
@@ -171,7 +109,6 @@ public class Base extends Selectable{
 	
 	public boolean isCollisionFlag() {
 		return collisionFlag;
-		
 	}
 
 	public void setCollisionFlag(boolean b) {

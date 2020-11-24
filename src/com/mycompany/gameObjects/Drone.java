@@ -23,8 +23,8 @@ public class Drone extends Movable {
 	 * @param point
 	 * @param color
 	 */
-	public Drone(int damageLevel, int heading, int speed, int size, Point point, int color) {
-		super(heading, speed, size, point, color);
+	public Drone(int damageLevel, int heading, int speed, int size, Point point, int color, int UUID) {
+		super(heading, speed, size, point, color, UUID);
 		this.damageLevel = damageLevel;
 	}
 	
@@ -91,7 +91,7 @@ public class Drone extends Movable {
 		int [] traingleX = {xLoc-size/2, xLoc+size/2, xLoc};
 		int [] traingleY = {yLoc-size/2, yLoc-size/2, yLoc+size/2};
 		g.drawPolygon(traingleX, traingleY, 3);
-		super.draw(g, pCmpRelPrnt);
+		//super.draw(g, pCmpRelPrnt);
 	}
 		
 	/**
@@ -105,38 +105,38 @@ public class Drone extends Movable {
 		return myDesc;
 	}
 
-	/**
-	 * overides equals opperator for Movable Drone Gameobject.
-	 */
-	@Override
-	public boolean equals(Object obj) {
-		  if (!(obj instanceof Drone)) {
-	            return false;
-	        }
-		  	Drone test = (Drone) obj;
-			return test.damageLevel == this.damageLevel 
-					&& test.getcolor() == this.getcolor()
-					&& test.getPoint() == this.getPoint() 
-					&& test.getSize() == this.getSize()
-					&& test.getspeed() == this.getspeed() 
-					&& test.getheading() == this.getheading(); 
-	}
-
-	/**
-	 * overides hascode for Movable Drone Gameobject.
-	 */
-	@Override
-	public int hashCode() {
-		int hash = 23;
-		hash = 31 * hash + this.damageLevel;
-		hash = 31 * hash + this.getcolor();
-		hash = 31 * hash + this.getSize();
-		hash = 31 * hash + this.getspeed();
-		hash = 31 * hash + this.getheading();
-		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getX());
-		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getY());
-		return hash;
-	}
+//	/**
+//	 * overides equals opperator for Movable Drone Gameobject.
+//	 */
+//	@Override
+//	public boolean equals(Object obj) {
+//		  if (!(obj instanceof Drone)) {
+//	            return false;
+//	        }
+//		  	Drone test = (Drone) obj;
+//			return test.damageLevel == this.damageLevel 
+//					&& test.getcolor() == this.getcolor()
+//					&& test.getPoint() == this.getPoint() 
+//					&& test.getSize() == this.getSize()
+//					&& test.getspeed() == this.getspeed() 
+//					&& test.getheading() == this.getheading(); 
+//	}
+//
+//	/**
+//	 * overides hascode for Movable Drone Gameobject.
+//	 */
+//	@Override
+//	public int hashCode() {
+//		int hash = 23;
+//		hash = 31 * hash + this.damageLevel;
+//		hash = 31 * hash + this.getcolor();
+//		hash = 31 * hash + this.getSize();
+//		hash = 31 * hash + this.getspeed();
+//		hash = 31 * hash + this.getheading();
+//		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getX());
+//		hash = 31 * hash + Float.floatToIntBits(this.getPoint().getY());
+//		return hash;
+//	}
 	
 
 	@Override

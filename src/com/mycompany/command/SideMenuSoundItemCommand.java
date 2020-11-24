@@ -28,8 +28,10 @@ public class SideMenuSoundItemCommand extends Command {
 	public void actionPerformed(ActionEvent evt) {
 		if (((CheckBox)evt.getComponent()).isSelected()) {
 			targetGameWorld.setSoundFlag(true);
+			targetGameWorld.playThemeMusic();
 		}else {
 			targetGameWorld.setSoundFlag(false);
+			targetGameWorld.pauseThemeMusic();
 		}
 	}
 }

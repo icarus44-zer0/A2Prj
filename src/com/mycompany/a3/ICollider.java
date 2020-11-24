@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import com.mycompany.gameObjects.GameObject;
 
 public interface ICollider {
-	ArrayList<ICollider> collideVector = new ArrayList<ICollider>();;
+	ArrayList<Integer> collideList = new ArrayList<Integer>();;
 
 
 	boolean collidesWith(GameObject otherObject);
@@ -16,8 +16,8 @@ public interface ICollider {
 	/**
 	 * @return the collideVector
 	 */
-	public default ArrayList<ICollider> getCollideList() {
-		return collideVector;
+	public default ArrayList<Integer> getCollideList() {
+		return collideList;
 	}
 
 }

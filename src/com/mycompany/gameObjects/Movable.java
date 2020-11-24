@@ -14,14 +14,12 @@ import com.mycompany.a3.GameWorld;
 public abstract class Movable extends GameObject {
 	private int heading;
 	private int speed;
-	private GameWorld gameWorld;
-	// private MapViewContainer container = new MapViewContainer();
 
 	/**
 	 * 
 	 */
-	public Movable(int heading, int speed, int size, Point point, int color) {
-		super(size, point, color);
+	public Movable(int heading, int speed, int size, Point point, int color, int UUID) {
+		super(size, point, color, UUID);
 		this.heading = heading;
 		this.speed = speed;
 	}
@@ -52,156 +50,31 @@ public abstract class Movable extends GameObject {
 		this.setPoint(nextPoint);
 
 		// rebound to direction based  when hit the boundary
-			int s = this.getSize();
-			double x = this.getPoint().getX();
-			double y = this.getPoint().getY();
-			int reboundOffset = s/8;
-			if (x-s/2 <= 0) {
+			int size = this.getSize();
+			double xLoc = this.getPoint().getX();
+			double yLoc = this.getPoint().getY();
+			if (xLoc-size/2 <= 0) {
 				this.heading = -heading;
-				this.getPoint().setX((float) x+reboundOffset);
-				this.getPoint().setY((float) y);
+				this.getPoint().setX((float) xLoc + size/8);
+				this.getPoint().setY((float) yLoc);
 			}
-			else if (x+s/2 >= maxX) {
+			else if (xLoc+size/2 >= maxX) {
 				this.heading = -heading;
-				this.getPoint().setX((float) x-reboundOffset);
-				this.getPoint().setY((float) y);
+				this.getPoint().setX((float) xLoc - size/8);
+				this.getPoint().setY((float) yLoc);
 			}
-			else if (y-s/2 <= 0) {	
+			else if (yLoc-size/2 <= 0) {	
 				this.heading = 180 - heading;
-				this.getPoint().setX((float) x);
-				this.getPoint().setY((float) y+reboundOffset);
+				this.getPoint().setX((float) xLoc);
+				this.getPoint().setY((float) yLoc + size/8);
 			}
-			else if (y+s/2 >= maxY) {
+			else if (yLoc+size/2 >= maxY) {
 				this.heading = 180 - heading;
-				this.getPoint().setX((float) x);
-				this.getPoint().setY((float) y-reboundOffset);
+				this.getPoint().setX((float) xLoc);
+				this.getPoint().setY((float) yLoc - size/8);
 			}
 
-	} //move
-	
-
-//		/**
-//		 * mymove function 
-//		 */
-//	public void move() {
-//		gameWorld = GameWorld.getInstance();
-//		int size = this.getSize();
-//		int velocity = speed;
-//		double time = 1; //gameWorld.gettimeElapsed();
-//		int angle = 90 - this.heading;
-//
-//		float x = super.getPoint().getX();
-//		float y = super.getPoint().getY();
-//
-//		double deltaX = Math.cos(Math.toRadians(angle)) * velocity * time;
-//		double deltaY = Math.sin(Math.toRadians(angle)) * velocity * time;
-//
-//		double nextX = x + deltaX;
-//		double nextY = y + deltaY;
-//
-//
-//		 // left
-//		if (nextX <= ((size / 2))) {
-//			angle = 180 - angle;
-//			deltaX = Math.cos(Math.toRadians(angle)) * velocity;
-//			nextX = x + deltaX;
-//			heading = angle;
-//		}
-//		// right
-//		 if (nextX >= gameWorld.getGameWidth() - ((size / 2))) {
-//			angle = 180 - angle;
-//			deltaX = Math.cos(Math.toRadians(angle)) * velocity;
-//			nextX = x + deltaX;
-//			heading = angle;
-//		}
-//		// bottom
-//		 if (nextY <= ((size / 2))) {
-//			angle = 180 - angle;
-//			deltaY = Math.sin(Math.toRadians(angle)) * velocity;
-//			nextY = y + deltaY;
-//			heading = angle;
-//		}
-//		// top
-//		 if (nextY >= gameWorld.getGameHeight() - ((size / 2))) {
-//			angle = 180 - angle;
-//			deltaY = Math.sin(Math.toRadians(angle)) * velocity;
-//			nextY = y + deltaY;
-//			heading = angle;
-//		}
-//
-//		super.setX((float) nextX);
-//		super.setY((float) nextY);
-//	}
-//	
-	
-//	public void move() {
-//		GameWorld gameWorld = GameWorld.getInstance();
-//		double mapWidth = gameWorld.getGameWidth();
-//		double mapHeight =  gameWorld.getGameHeight();
-//		double time = .02;
-//		
-//		
-//		Point oldLocation = this.getPoint(); //get current location and store here
-//		
-//		Point newLocation = new Point(0,0); // new location initialized
-//		
-//	
-//		int properAngle = 90-heading; //angle because coordinate plane is shifted
-//		double deltaX = 0;
-//		double deltaY = 0;
-//		
-//		
-//		
-//		/*
-//		 * direction * speed results in units of distance 
-//		 */
-//		if(heading == 0 || heading == 180) //if only vertical movement
-//		{
-//			deltaY = Math.sin(Math.toRadians(properAngle)) * speed;
-//		}
-//		else if( heading == 90 || heading == 270 ) //only horizontal
-//			deltaX = Math.cos(Math.toRadians(properAngle)) * speed;
-//		else // if both vertical and horizontal movement required
-//		{
-//			deltaX = Math.cos(Math.toRadians(properAngle))*speed; 
-//			deltaY = Math.sin(Math.toRadians(properAngle)) * speed;
-//		}
-//		
-//		/*
-//		 * Changing new location x and y by using oldLocation x and y
-//		 * and adding delta X and delta Y
-//		 */
-//		
-//		newLocation.setX((float) deltaX + oldLocation.getX()); 
-//		newLocation.setY((float) deltaY+oldLocation.getY());
-//		
-//		
-//		if (newLocation.getX() >= mapWidth)
-//		{
-//			newLocation.setX((float) (newLocation.getX() - mapWidth));
-//		}
-//		else if (newLocation.getX() <= 0.0)
-//		{
-//			newLocation.setX( (float) mapWidth - Math.abs(newLocation.getX()));
-//		}
-//		
-//		if (newLocation.getY() >= mapHeight)
-//		{
-//			newLocation.setY((float) (newLocation.getY()- mapHeight));
-//		}
-//		else if (newLocation.getY() <= 0.0)
-//		{
-//			newLocation.setY( (float) mapHeight - Math.abs(newLocation.getY()));
-//			
-//		}
-//		newLocation.setX(newLocation.getX());
-//		newLocation.setY(newLocation.getY());
-//		
-//
-//		super.setPoint(newLocation); //changing location to new location		
-//	}
-	
-
+	} 
 
 	/**
 	 * Getter for the heading of a movable gameobject.
@@ -244,20 +117,34 @@ public abstract class Movable extends GameObject {
 	}
 
 	
-	protected void movableCollision() {
-		heading = 180 - heading;
-		float x = super.getPoint().getX();
-		float y = super.getPoint().getY();
+	protected void movableCollision(GameObject otherObject) {
+		double maxX = otherObject.getPoint().getX() + otherObject.getSize()/2;
+		double maxY = otherObject.getPoint().getY() + otherObject.getSize()/2;
 
-		double deltaX = Math.cos(Math.toRadians(heading)) * speed;
-		double deltaY = Math.sin(Math.toRadians(heading)) * speed;
-
-		double nextX = x + deltaX;
-		double nextY = y + deltaY;
 		
-		super.setX((float) nextX);
-		super.setY((float) nextY);
-		move();
+		int size = this.getSize();
+		double xLoc = this.getPoint().getX();
+		double yLoc = this.getPoint().getY();
+		if (xLoc-size/2 <= maxX) {
+			this.heading = -heading;
+			this.getPoint().setX((float) xLoc + size/8);
+			this.getPoint().setY((float) yLoc);
+		}
+		else if (xLoc+size/2 > maxX) {
+			this.heading = -heading;
+			this.getPoint().setX((float) xLoc - size/8);
+			this.getPoint().setY((float) yLoc);
+		}
+		else if (yLoc-size/2 <= maxY) {	
+			this.heading = 180 - heading;
+			this.getPoint().setX((float) xLoc);
+			this.getPoint().setY((float) yLoc + size/8);
+		}
+		else if (yLoc+size/2 > maxY) {
+			this.heading = 180 - heading;
+			this.getPoint().setX((float) xLoc);
+			this.getPoint().setY((float) yLoc - size/8);
+		}
 	}
 
 	/**

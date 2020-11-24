@@ -67,9 +67,11 @@ public class SideMenuItemForm extends Form {
 		soundValueCheckBox = new CheckBox();
 		
 		soundValueCheckBox.setCommand(sideMenuSoundItemCommand);
+		soundValueCheckBox.setSelected(true);
 		soundValueCheckBox.getAllStyles().setBgTransparency(255);
-		soundValueCheckBox.getAllStyles().setBgColor(ColorUtil.LTGRAY);	
+		soundValueCheckBox.getAllStyles().setBgColor(ColorUtil.LTGRAY);
 		gameToolbar.addComponentToSideMenu(soundValueCheckBox);
+		
 	}
 
 	/**

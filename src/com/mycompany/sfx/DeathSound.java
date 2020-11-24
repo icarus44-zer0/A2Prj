@@ -14,13 +14,16 @@ public class DeathSound {
 		if (Display.getInstance().getCurrent() == null) {
 			System.exit(0);
 		}
-		try {
-			InputStream is = Display.getInstance().getResourceAsStream(getClass(), "/" + fileName);
-			m = MediaManager.createMedia(is, "audio/wav");
-		} catch (IOException e) {
-			System.out.println("MARCELOUS WALLACE");
+		while (m == null) {
+			try {
+				InputStream is = Display.getInstance().getResourceAsStream(getClass(), "/" + fileName);
+				m = MediaManager.createMedia(is, "audio/wav");
+			} catch (IOException e) {
+				System.out.println("MARCELOUS WALLACE");
+			}
 		}
 	}
+	
 	public void pause() {
 		m.pause();
 	}
